@@ -230,7 +230,7 @@ export default function ImageLightbox({
       {/* Bottom Info HUD */}
       <div className="h-16 px-6 flex items-center justify-between border-t border-[#181818] bg-void/80 z-10 text-[13px]">
         <div className="text-silver-mist font-light max-w-2xl truncate">
-          {currentAsset.description}
+          {currentAsset.caption || currentAsset.description}
         </div>
         <div className="flex items-center gap-4 text-ash-gray font-mono text-[12px]">
           <span>

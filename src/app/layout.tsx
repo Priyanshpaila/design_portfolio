@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://portfolio-dala.vercel.app"),
-  title: "Unlock collective wisdom. — Dala Design Archive",
+  metadataBase: new URL("https://portfolio.designer.dev"),
+  title: "Designing ideas into visual experiences. — Graphic Design Portfolio",
   description:
-    "Monolithic dark-stage design environment where black voids meet electric iris accents and a signature brain constellation. Art-directed case studies across brand identity, editorial design, and digital systems.",
+    "A collection of graphic design work exploring brand identities, visual communication, digital graphics and print design. Each project reflects a different idea, purpose and creative direction.",
 };
 
 export const viewport: Viewport = {

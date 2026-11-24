@@ -78,7 +78,7 @@ export default function ConstellationCanvas({
     let targetScrollProgress = 0;
     let currentScrollProgress = 0;
 
-    // Chromatic colors from Dala Style Reference
+    // Chromatic colors from Style Reference
     const GOLD_PALETTE = ["#ffb829", "#ffaa00", "#ffd700", "#ffc83b", "#ffe066"];
     const CHROMATIC_PALETTE = [
       "#8052ff", // Electric Iris

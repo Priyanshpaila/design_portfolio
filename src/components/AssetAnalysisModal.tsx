@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, CheckCircle2, ArrowRight, Layers, FileImage, Cpu, Eye, Palette, Type, Upload } from "lucide-react";
+import { X, Sparkles, CheckCircle2, ArrowRight, Layers, FileImage, Cpu, Eye, Palette, Type } from "lucide-react";
 import { PROJECTS } from "@/data/projects";
 
 interface AssetAnalysisModalProps {
@@ -22,37 +22,37 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
       step: 1,
       title: "File Ingestion & Pixel Audit",
       icon: FileImage,
-      desc: "Inspect raw aspect ratios, dimensions, alpha transparency, and DPI integrity without modifying or recompressing original files.",
+      desc: "Inspect raw aspect ratios, dimensions, alpha transparency, and DPI integrity without modifying or recompressing original artwork.",
     },
     {
       step: 2,
       title: "Category Classification",
       icon: Cpu,
-      desc: "Automatically determine whether work represents Brand Identity, Corporate Brochure, Festival Creative, or Mobile Product.",
+      desc: "Automatically determine whether work represents Brand Identity, Corporate Design, Editorial Brochure, or Festival Creative.",
     },
     {
       step: 3,
       title: "Asset Clustering Engine",
       icon: Layers,
-      desc: "Group related variants (dark/light versions, splash screens, app icons) into unified multi-asset projects.",
+      desc: "Group related variants (dark/light logo versions, multi-panel brochure spreads, app icons) into unified projects.",
     },
     {
       step: 4,
       title: "Color & Contrast Extraction",
       icon: Palette,
-      desc: "Derive primary, secondary, and accent HEX codes directly from raw pixel data and compute WCAG contrast ratios on black void.",
+      desc: "Derive primary, secondary, and accent HEX codes directly from raw pixel data and compute contrast ratios on black void.",
     },
     {
       step: 5,
       title: "Typographic Analysis",
       icon: Type,
-      desc: "Detect script families (Latin, Devanagari, Grotesque, Display Serif) and suggest verified font alternatives.",
+      desc: "Analyze visual letterforms across Latin and Devanagari scripts and isolate key typographic characteristics.",
     },
     {
       step: 6,
-      title: "Art-Directed Layout Synthesis",
+      title: "Mood Board Synthesis",
       icon: Eye,
-      desc: "Assign the tailored presentation structure (Logo Identity vs Multi-Panel Publication vs Festive Campaign).",
+      desc: "Assign a tailored, presentation-driven mood board layout suited specifically to the project's media format.",
     },
   ];
 
@@ -65,14 +65,14 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-saffron-spark animate-ping" />
               <span className="text-[12px] font-mono uppercase tracking-[0.35px] text-saffron-spark font-semibold">
-                Automated Presentation Pipeline
+                Portfolio Ingestion System
               </span>
             </div>
             <h2 className="text-[28px] sm:text-[36px] font-normal tracking-[-1px] text-bone-white font-sans">
-              Asset Analysis & Presentation Engine
+              Asset Analysis & Presentation Pipeline
             </h2>
             <p className="text-[15px] text-ash-gray font-light max-w-2xl leading-relaxed">
-              Every uploaded design asset is systematically audited, classified, clustered, and transformed into an art-directed Behance-standard case study without fabricating history.
+              Every design asset is audited, classified, clustered, and structured into a curated presentation without fabricating project history or client metrics.
             </p>
           </div>
 
@@ -87,7 +87,7 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
         {/* Project Selector for Live Analysis */}
         <div className="flex flex-col gap-3">
           <span className="text-[12px] uppercase font-mono tracking-wider text-ash-gray">
-            Select Processed Project to Inspect:
+            Select Project to Inspect:
           </span>
           <div className="flex flex-wrap gap-2">
             {PROJECTS.map((p) => (
@@ -147,7 +147,7 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
               </h3>
             </div>
             <span className="text-[12px] font-mono text-ash-gray hidden sm:inline">
-              Source Project: {currentProject.title}
+              Project: {currentProject.title}
             </span>
           </div>
 
@@ -155,7 +155,6 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
             {pipelineSteps[activeStep - 1].desc}
           </p>
 
-          {/* Conditional Step Content */}
           {activeStep === 1 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               {currentProject.assets.map((asset) => (
@@ -211,10 +210,10 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
                 Asset Relationship Cluster
               </span>
               <p className="text-[14px] text-bone-white leading-relaxed font-light">
-                Cluster detected <strong className="text-electric-iris">{currentProject.assets.length}</strong> interdependent files belonging to the <strong>{currentProject.clientOrBrand}</strong> design ecosystem.
+                Cluster detected <strong className="text-electric-iris">{currentProject.assets.length}</strong> interdependent artwork files belonging to <strong>{currentProject.title}</strong>.
               </p>
               <div className="text-[12px] text-silver-mist">
-                • Intended format: {currentProject.intendedFormat}
+                • Summary: {currentProject.summary}
               </div>
             </div>
           )}
@@ -244,7 +243,7 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
                     {t.family}
                   </div>
                   <div className="text-[13px] text-silver-mist">
-                    Substitute Recommendation: {t.recommendedAlternative || "Exact Match"}
+                    Notes: {t.notes}
                   </div>
                 </div>
               ))}
@@ -254,13 +253,13 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
           {activeStep === 6 && (
             <div className="p-4 bg-[#141414] rounded-xl border border-[#222222] flex flex-col gap-3">
               <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                Art Direction Blueprint Selected
+                Mood Board Architecture
               </span>
               <div className="text-[18px] text-bone-white font-normal">
-                {currentProject.introduction.headline}
+                "{currentProject.moodBoard.heroQuote}"
               </div>
               <p className="text-[14px] text-silver-mist font-light leading-relaxed">
-                {currentProject.introduction.statement}
+                {currentProject.statement}
               </p>
             </div>
           )}
@@ -269,7 +268,7 @@ export default function AssetAnalysisModal({ isOpen, onClose }: AssetAnalysisMod
         {/* Footer actions */}
         <div className="flex items-center justify-between border-t border-[#181818] pt-6">
           <span className="text-[12px] font-mono text-ash-gray">
-            Vercel-Ready Modular Pipeline Engine
+            Graphic Design Archive Engine
           </span>
           <button
             onClick={onClose}

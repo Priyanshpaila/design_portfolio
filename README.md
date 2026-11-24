@@ -1,6 +1,6 @@
-# Dala — Graphic Design Portfolio & Automated Case Study System
+# Graphic Design Portfolio — Selected Works Archive
 
-A monolithic, dark-void graphic design portfolio engineered with **Next.js 14 (App Router)**, **TypeScript**, and **Tailwind CSS**, strictly built according to the **Dala Style Reference (`DESIGN.md`)**.
+A monolithic, dark-void personal graphic design portfolio engineered with **Next.js 14 (App Router)**, **TypeScript**, and **Tailwind CSS**, built according to the dark-void design reference (`DESIGN.md`).
 
 > *Constellation floating on black velvet.*
 
@@ -15,116 +15,65 @@ A monolithic, dark-void graphic design portfolio engineered with **Next.js 14 (A
   - Weight `600` uppercase nav and metadata labels with `0.025em` tracking.
 - **Primary CTA**: Filled Electric Iris (`#8052ff`) pill button (`22.5px` border-radius).
 - **Chromatic Tension**: Saffron Spark (`#ffb829`) and Deep Verdant (`#15846e`) accents.
-- **Hero Centerpiece**: Procedural canvas particle constellation forming an organic brain/neural shape of thousands of multicolored triangular glyphs with interactive mouse parallax.
+- **Hero Centerpiece**: Procedural canvas particle constellation forming a 3D brain shape with glowing golden halo rim, thousands of multicolored triangular glyphs, and floating 3D wireframe polyhedra.
+- **Smooth Inertia Scrolling**: Lenis smooth scroll synchronized with GSAP ScrollTrigger ticker.
+- **Editorial Typography**: GSAP line-reveal animations and layered scrub parallax.
 
 ---
 
 ## ✦ Case Studies Included
 
 1. **LOGI Yatra** (`/project/logi-yatra`)
-   - *Category*: Brand Identity & Logo Design / Digital Fleet
+   - *Category*: Brand Identity / Logo Design
    - *Original Assets*: Application squircle icon (`Frame 38.png`) & horizontal presentation (`LogiyatraLogo.png`).
-   - *Highlights*: Bilingual Latin ("LOGI") & Devanagari ("यात्रा") balance with integrated express cargo vehicle.
+   - *Overview*: A bilingual visual identity combining typography and transportation-inspired symbolism to create a distinctive brand mark.
 2. **HIRA अतिथि** (`/project/hira-atithi`)
-   - *Category*: Brand Identity & Cultural Hospitality
+   - *Category*: Logo Design / Visual Identity
    - *Original Asset*: Master artwork (`visitorurl.png`).
-   - *Highlights*: Reverent Anjali Mudra (praying hands), radiant golden halo, and red horizon connecting Latin and Devanagari.
+   - *Overview*: An illustrative identity built around devotional symbolism, expressive typography and a distinctive visual composition.
 3. **FIXNIX** (`/project/fixnix`)
-   - *Category*: Digital Product Identity & Mobile Application Graphics
+   - *Category*: Logo Design / Digital Branding
    - *Original Assets*: Dark mode logo (`logo-for-dark.png`), light mode logo (`logo-for-light.png`), and mobile splash screen (`fixnix_splash_screen.png`).
-   - *Highlights*: Surface adaptability toggle, twin emerald status diodes on 'I' letterforms, and repeating watermark pattern.
+   - *Overview*: A visual identity developed through bold typography, contrasting logo variations and a distinctive digital splash screen.
 4. **Bhawani Moulders** (`/project/bhawani-moulders`)
-   - *Category*: Corporate Branding & Editorial Publication
+   - *Category*: Corporate Communication / Brochure Design
    - *Original Asset*: Multi-panel master brochure (`Group 209.png`, 4960 × 10521 px).
-   - *Highlights*: Interactive 3-panel editorial reader (Cover, Products, Fabrication & Quality Compliance), 30° diagonal architecture, and realistic tri-fold mockups.
+   - *Overview*: A corporate brochure design bringing together industrial imagery, structured information and a consistent visual language.
 5. **Kalpavraksh** (`/project/kalpavraksh`)
-   - *Category*: Festive Promotional Campaign & Cultural Craft
+   - *Category*: Promotional Design / Festival Creative
    - *Original Asset*: Complete Diwali flyer (`sample!.png`, 1545 × 2000 px).
-   - *Highlights*: Uncropped high-res inspection, corner floral rangoli mandalas, hanging marigold diya garlands, and luxury gift mockups.
-
----
-
-## ✦ Features & Automation Engine
-
-- **High-Res Lightbox Inspector**: Multi-level zoom (1x to 3.5x), smooth mouse pan/drag, pixel-accurate inspection, and direct download of original artwork.
-- **Color Architecture**: Extracted HEX codes, contrast ratios, and one-click copy-to-clipboard.
-- **Typographic Taxonomy**: Letterform geometry breakdown with identified fonts and verified web substitutes.
-- **Asset Ingestion Pipeline Modal**: Interactive 6-phase demonstration of how raw assets are audited, categorized, clustered, and structured for future uploads.
-- **Static Site Generation (SSG)**: All routes pre-rendered statically for sub-second global delivery.
+   - *Overview*: A festive promotional composition combining traditional decorative elements, expressive typography and a vibrant visual palette.
 
 ---
 
 ## ✦ Quick Start
 
-### 1. Install Dependencies
 ```bash
+# Install dependencies
 npm install
-```
 
-### 2. Run Local Development Server
-```bash
+# Run development server
 npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Build for Production
-```bash
+# Build for production
 npm run build
 npm run start
 ```
+Open [http://localhost:3000](http://localhost:3000) to view the live portfolio.
 
 ---
 
 ## ✦ Deploying to Vercel (1-Click Ready)
 
-This repository is pre-configured for instant zero-configuration deployment to [Vercel](https://vercel.com):
-
-1. Initialize Git and commit:
+1. Commit all files:
 ```bash
 git add .
-git commit -m "feat: complete graphic design portfolio presentation system"
+git commit -m "feat: personal graphic design portfolio with visual mood boards"
 ```
-2. Push to your GitHub / GitLab / Bitbucket repository:
+2. Push to GitHub:
 ```bash
 git remote add origin https://github.com/<your-username>/<repo-name>.git
 git branch -M main
 git push -u origin main
 ```
-3. In **Vercel Dashboard**:
-   - Click **"Add New Project"**
-   - Import your repository
-   - Framework Preset: **Next.js** (automatically detected)
-   - Click **Deploy**
-
----
-
-## ✦ Directory Structure
-
-```
-├── assets/                  # Original raw design assets (untouched)
-├── public/assets/           # Publicly served original & optimized assets
-├── src/
-│   ├── app/
-│   │   ├── globals.css      # Dala design system tokens & custom utilities
-│   │   ├── layout.tsx       # Root layout with fonts, viewport & metadata
-│   │   ├── page.tsx         # Portfolio homepage with hero constellation & selected works
-│   │   └── project/[slug]/  # Pre-rendered static case study routes
-│   ├── components/
-│   │   ├── ConstellationCanvas.tsx  # Brain-shape particle cloud hero visual
-│   │   ├── AmbientParticles.tsx     # Ambient drifting triangular particles
-│   │   ├── Navbar.tsx               # Minimalist transparent header with violet pill CTA
-│   │   ├── Footer.tsx               # Monolithic typography footer
-│   │   ├── ProjectCard.tsx          # Floating 24px-radius artwork card
-│   │   ├── ProjectDetailView.tsx    # Rich project presentation layout
-│   │   ├── ImageLightbox.tsx        # Pan/zoom high-res inspection HUD
-│   │   ├── ColorPaletteViewer.tsx   # Interactive color swatch copy tool
-│   │   ├── TypographyViewer.tsx     # Type specimen & font pairing inspector
-│   │   ├── MockupDevice.tsx         # Realistic supporting application mockups
-│   │   └── AssetAnalysisModal.tsx   # 6-phase automated pipeline inspector
-│   └── data/
-│       └── projects.ts              # Verified project definitions, tokens & assets
-├── DESIGN.md                # Strict design system source of truth (untouched)
-├── .gitignore               # Complete Vercel & Next.js ignore rules
-├── package.json
-└── tailwind.config.js
-```
+3. Import into Vercel and deploy.

@@ -8,19 +8,14 @@ import {
   Maximize2,
   Sparkles,
   Download,
-  Layers,
-  ChevronLeft,
-  ChevronRight,
-  Sun,
-  Moon,
-  ExternalLink,
+  Copy,
+  Check,
+  Eye,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import AmbientParticles from "@/components/AmbientParticles";
 import ImageLightbox from "@/components/ImageLightbox";
-import ColorPaletteViewer from "@/components/ColorPaletteViewer";
-import TypographyViewer from "@/components/TypographyViewer";
-import MockupDevice from "@/components/MockupDevice";
+import LineReveal from "@/components/LineReveal";
 import AssetAnalysisModal from "@/components/AssetAnalysisModal";
 import { ProjectData } from "@/data/projects";
 
@@ -35,20 +30,20 @@ export default function ProjectDetailView({
   nextProject,
   prevProject,
 }: ProjectDetailViewProps) {
-  // State
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxInitialIndex, setLightboxInitialIndex] = useState(0);
   const [isPipelineOpen, setIsPipelineOpen] = useState(false);
-
-  // FixNix interactive theme toggle
-  const [fixnixTheme, setFixnixTheme] = useState<"dark" | "light">("dark");
-
-  // Bhawani Moulders active panel tab
-  const [bhawaniActiveTab, setBhawaniActiveTab] = useState<"all" | "p1" | "p2" | "p3">("all");
+  const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
   const openLightboxWithAsset = (assetIndex: number) => {
     setLightboxInitialIndex(assetIndex);
     setLightboxOpen(true);
+  };
+
+  const handleCopyHex = (hex: string) => {
+    navigator.clipboard.writeText(hex);
+    setCopiedHex(hex);
+    setTimeout(() => setCopiedHex(null), 2000);
   };
 
   return (
@@ -56,7 +51,7 @@ export default function ProjectDetailView({
       <AmbientParticles count={30} />
       <Navbar onOpenPipeline={() => setIsPipelineOpen(true)} />
 
-      {/* Top Breadcrumb & Quick Nav */}
+      {/* Top Breadcrumb & Project Switcher */}
       <div className="max-w-[1280px] mx-auto px-6 pt-10 pb-4 flex items-center justify-between border-b border-[#141414]">
         <Link
           href="/#selected-works"
@@ -90,77 +85,52 @@ export default function ProjectDetailView({
       </div>
 
       {/* ========================================================= */}
-      {/* 01 — PROJECT HERO & INTRODUCTION                          */}
+      {/* 01 — PROJECT HERO & CREATIVE STATEMENT                    */}
       {/* ========================================================= */}
       <section className="max-w-[1280px] mx-auto px-6 py-16 sm:py-24">
-        <div className="flex flex-col gap-8">
-          {/* Metadata badges */}
+        <div className="flex flex-col gap-6">
+          {/* Category & Discipline Tags */}
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-[12px] uppercase font-mono tracking-wider text-saffron-spark font-semibold">
               {project.category}
             </span>
             <span className="text-ash-gray text-[12px] font-mono">•</span>
             <span className="text-[12px] uppercase font-mono tracking-wider text-ash-gray">
-              Client / Brand: {project.clientOrBrand}
+              {project.disciplines.join(" • ")}
             </span>
           </div>
 
-          {/* Monolithic Display Title (Weight 400, Negative Tracking) */}
-          <h1 className="text-[52px] sm:text-[78px] lg:text-[104px] font-normal leading-[1.0] tracking-[-3.12px] lg:tracking-[-4.52px] text-bone-white font-sans max-w-5xl">
-            {project.title}
-          </h1>
+          {/* Monolithic Project Display Title */}
+          <LineReveal
+            as="h1"
+            lines={[project.title]}
+            className="text-[52px] sm:text-[76px] lg:text-[98px] font-normal leading-[1.0] tracking-[-3.12px] text-bone-white font-sans max-w-5xl"
+            duration={1.2}
+            triggerOnScroll={false}
+          />
 
-          <div className="text-[24px] sm:text-[32px] font-normal tracking-[-0.8px] text-silver-mist">
+          <div className="text-[22px] sm:text-[28px] font-normal tracking-[-0.6px] text-silver-mist">
             {project.subtitle}
           </div>
 
-          {/* Asymmetric Two-Column Introduction Block */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-8 border-t border-[#161616] items-start">
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
-                01 — Project Overview & Strategic Brief
-              </span>
-              <h2 className="text-[32px] sm:text-[42px] font-normal leading-[1.15] tracking-[-1.68px] text-bone-white">
-                {project.introduction.headline}
-              </h2>
-              <p className="text-[18px] font-body-ultralight text-silver-mist leading-[1.6]">
-                {project.introduction.statement}
-              </p>
-            </div>
-
-            <div className="lg:col-span-5 flex flex-col gap-4 bg-[#080808] p-6 sm:p-8 rounded-3xl border border-[#1a1a1a]">
-              <span className="text-[12px] font-mono uppercase tracking-wider text-ash-gray">
-                Verified Deliverables
-              </span>
-              <ul className="flex flex-col gap-3">
-                {project.introduction.keyDeliverables.map((deliv, i) => (
-                  <li key={i} className="flex items-start gap-3 text-[14px] text-bone-white font-light">
-                    <span className="w-1.5 h-1.5 rounded-full bg-electric-iris mt-2 shrink-0" />
-                    <span>{deliv}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <p className="text-[18px] sm:text-[20px] font-body-ultralight text-silver-mist leading-[1.6] max-w-3xl pt-4">
+            {project.statement}
+          </p>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 02 — MASTER ARTWORK SHOWCASE & INSPECTOR                   */}
+      {/* 02 — THE VISUAL MOOD BOARD (Art-Directed Presentation)    */}
       {/* ========================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 py-12">
+      <section className="max-w-[1280px] mx-auto px-6 py-10">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 pb-4 border-b border-[#141414]">
             <div>
-              <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
-                02 — Original Asset Showcase
+              <span className="text-[13px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-1">
+                Visual Presentation
               </span>
-              <h2 className="text-[36px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white">
-                {project.category.includes("Brochure")
-                  ? "Publication Architecture."
-                  : project.category.includes("Campaign")
-                  ? "Festival Artwork."
-                  : "Original Identity Mark."}
+              <h2 className="text-[32px] sm:text-[42px] font-normal tracking-[-1.5px] text-bone-white">
+                Project Mood Board.
               </h2>
             </div>
 
@@ -169,417 +139,177 @@ export default function ProjectDetailView({
               className="btn-electric-pill"
             >
               <Maximize2 className="w-4 h-4" />
-              <span>Full High-Res Inspection</span>
+              <span>Inspect Full High-Res Asset</span>
             </button>
           </div>
 
-          {/* CUSTOM SHOWCASE FOR LOGI YATRA */}
-          {project.slug === "logi-yatra" && (
-            <div className="flex flex-col gap-8">
-              {/* Main horizontal logo on dark void */}
-              <div
-                onClick={() => openLightboxWithAsset(0)}
-                className="group relative w-full aspect-[16/9] sm:aspect-[21/9] bg-[#080808] rounded-3xl p-8 sm:p-14 flex items-center justify-center cursor-zoom-in border border-[#161616] overflow-hidden"
-              >
-                <img
-                  src="/assets/logiyatra_horizontal.png"
-                  alt="Logi Yatra Horizontal Mark"
-                  className="max-h-[65%] max-w-[85%] object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute bottom-6 left-6 flex items-center gap-2 bg-void/80 px-3 py-1.5 rounded-full border border-[#2a2a2a] text-[12px] font-mono text-silver-mist">
-                  <Maximize2 className="w-3.5 h-3.5 text-saffron-spark" />
-                  <span>Click to inspect original raster (500 × 536 px)</span>
-                </div>
-              </div>
-
-              {/* Two-Column Detail: App Icon & Typography lockup */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div
-                  onClick={() => openLightboxWithAsset(1)}
-                  className="group p-8 rounded-3xl bg-[#080808] border border-[#161616] flex flex-col items-center justify-center gap-6 cursor-zoom-in"
-                >
-                  <div className="w-40 h-40 rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
-                    <img
-                      src="/assets/logiyatra_icon.png"
-                      alt="Logi Yatra App Icon"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <div className="text-[16px] text-bone-white font-medium">
-                      Mobile Application Icon (Squircle)
-                    </div>
-                    <div className="text-[13px] text-ash-gray font-mono mt-1">
-                      Frame 38.png • 180 × 180 px
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-8 rounded-3xl bg-[#080808] border border-[#161616] flex flex-col justify-center gap-4">
-                  <span className="text-[12px] font-mono uppercase tracking-wider text-saffron-spark">
-                    Bilingual Typography Composition
-                  </span>
-                  <h3 className="text-[24px] font-normal text-bone-white">
-                    Latin & Devanagari Symbiosis
-                  </h3>
-                  <p className="text-[15px] text-silver-mist leading-relaxed font-light">
-                    The composition bridges the English acronym with regional Devanagari script. The horizontal headline bar (shirorekha) of "यात्रा" serves as the roadway supporting the express cargo delivery truck, symbolizing nationwide accessibility across language barriers.
-                  </p>
-                </div>
-              </div>
+          {/* Mood Board Quote Banner */}
+          {project.moodBoard.heroQuote && (
+            <div className="p-8 sm:p-12 rounded-3xl bg-[#080808] border border-[#161616] relative overflow-hidden">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-ash-gray block mb-3">
+                Creative Direction
+              </span>
+              <p className="text-[24px] sm:text-[34px] font-normal leading-[1.25] tracking-[-0.8px] text-bone-white font-sans max-w-4xl">
+                "{project.moodBoard.heroQuote}"
+              </p>
             </div>
           )}
 
-          {/* CUSTOM SHOWCASE FOR HIRA ATITHI */}
-          {project.slug === "hira-atithi" && (
-            <div className="flex flex-col gap-8">
-              <div
-                onClick={() => openLightboxWithAsset(0)}
-                className="group relative w-full aspect-[16/8] sm:aspect-[21/9] bg-[#050505] rounded-3xl p-8 sm:p-14 flex items-center justify-center cursor-zoom-in border border-[#161616] overflow-hidden"
-              >
-                <img
-                  src="/assets/hira_atithi_logo.png"
-                  alt="Hira Atithi Master Artwork"
-                  className="max-h-[75%] max-w-[90%] object-contain transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute bottom-6 left-6 flex items-center gap-2 bg-void/80 px-3 py-1.5 rounded-full border border-[#2a2a2a] text-[12px] font-mono text-silver-mist">
-                  <Maximize2 className="w-3.5 h-3.5 text-saffron-spark" />
-                  <span>Master High-Resolution Artwork (1607 × 704 px)</span>
-                </div>
-              </div>
+          {/* Asymmetric Masonry Mood Board Grid */}
+          <div className="grid grid-cols-12 gap-6 sm:gap-8 items-start">
+            {project.moodBoard.tiles.map((tile, idx) => {
+              const colClass = tile.colSpan || "col-span-12 lg:col-span-6";
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    01 • The Anjali Mudra
-                  </span>
-                  <div className="text-[15px] text-bone-white font-medium">Sacred Greeting</div>
-                  <p className="text-[13px] text-ash-gray font-light leading-relaxed">
-                    Palms gently pressed together symbolize heartfelt greeting, reverence, and non-violence.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    02 • The Golden Halo
-                  </span>
-                  <div className="text-[15px] text-bone-white font-medium">Sanctum Illumination</div>
-                  <p className="text-[13px] text-ash-gray font-light leading-relaxed">
-                    A radiating circular disc behind the hands evokes dawn light and the sanctity of divine hospitality.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    03 • Red Horizon Arc
-                  </span>
-                  <div className="text-[15px] text-bone-white font-medium">Dynamic Connection</div>
-                  <p className="text-[13px] text-ash-gray font-light leading-relaxed">
-                    A sweeping red stroke bridges the Latin 'HIRA' wordmark and traditional Devanagari 'अतिथि'.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CUSTOM SHOWCASE FOR FIXNIX */}
-          {project.slug === "fixnix" && (
-            <div className="flex flex-col gap-8">
-              {/* Surface Adaptability Switcher */}
-              <div className="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-2xl border border-[#1a1a1a]">
-                <div className="flex items-center gap-3">
-                  <span className="text-[13px] font-mono text-ash-gray uppercase">
-                    Interactive Surface Simulation:
-                  </span>
-                  <span className="text-[13px] font-semibold text-bone-white">
-                    {fixnixTheme === "dark" ? "Dark Mode Canvas" : "Light Mode Canvas"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setFixnixTheme("dark")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-                      fixnixTheme === "dark"
-                        ? "bg-bone-white text-void font-semibold"
-                        : "text-ash-gray hover:text-bone-white"
-                    }`}
-                  >
-                    <Moon className="w-3.5 h-3.5" />
-                    <span>Dark Surface</span>
-                  </button>
-                  <button
-                    onClick={() => setFixnixTheme("light")}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-all ${
-                      fixnixTheme === "light"
-                        ? "bg-bone-white text-void font-semibold"
-                        : "text-ash-gray hover:text-bone-white"
-                    }`}
-                  >
-                    <Sun className="w-3.5 h-3.5" />
-                    <span>Light Surface</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Logo Presentation Stage with Dark/Light Toggle */}
-              <div
-                className={`w-full aspect-[16/7] rounded-3xl p-10 flex items-center justify-center transition-colors duration-500 border border-[#222222] ${
-                  fixnixTheme === "dark" ? "bg-[#000000]" : "bg-[#F5F5F5]"
-                }`}
-              >
-                <img
-                  src={
-                    fixnixTheme === "dark"
-                      ? "/assets/fixnix_logo_dark.png"
-                      : "/assets/fixnix_logo_light.png"
-                  }
-                  alt="FixNix Logo"
-                  className="max-h-24 sm:max-h-32 object-contain transition-all duration-300"
-                />
-              </div>
-
-              {/* Splash Screen Presentation */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4">
-                <div
-                  onClick={() => openLightboxWithAsset(0)}
-                  className="lg:col-span-5 bg-[#080808] p-8 rounded-3xl border border-[#161616] flex items-center justify-center cursor-zoom-in"
-                >
-                  <div className="w-[260px] aspect-[390/844] rounded-[32px] overflow-hidden shadow-2xl border-4 border-[#222222]">
-                    <img
-                      src="/assets/fixnix_splash.png"
-                      alt="FixNix Splash Screen"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-
-                <div className="lg:col-span-7 flex flex-col gap-6">
-                  <span className="text-[12px] font-mono uppercase tracking-wider text-saffron-spark">
-                    Digital Product Identity
-                  </span>
-                  <h3 className="text-[28px] sm:text-[36px] font-normal text-bone-white">
-                    Emerald Energy & Tessellated Watermark
-                  </h3>
-                  <p className="text-[16px] font-body-ultralight text-silver-mist leading-relaxed">
-                    The mobile launch screen combines saturated electric emerald (#00C066) with a subtle repeating outline pattern of the FIXNIX logotype. This establishes instant brand recognition during cold app launches before resolving into the functional UI interface.
-                  </p>
-                  <div className="flex items-center gap-4 text-[13px] font-mono text-ash-gray">
-                    <span>• Dimensions: 390 × 844 px</span>
-                    <span>• Mobile iOS/Android Launch Standard</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* CUSTOM SHOWCASE FOR BHAWANI MOULDERS */}
-          {project.slug === "bhawani-moulders" && (
-            <div className="flex flex-col gap-8">
-              {/* Interactive Panel Tab Bar */}
-              <div className="flex flex-wrap items-center gap-2 p-2 bg-[#0a0a0a] rounded-2xl border border-[#1a1a1a]">
-                {[
-                  { id: "all", label: "Full Master Spread" },
-                  { id: "p1", label: "Panel 01: Cover & Profile" },
-                  { id: "p2", label: "Panel 02: Structural Products" },
-                  { id: "p3", label: "Panel 03: Fabrication & Quality" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setBhawaniActiveTab(tab.id as any)}
-                    className={`text-[13px] font-medium px-4 py-2 rounded-xl transition-all ${
-                      bhawaniActiveTab === tab.id
-                        ? "bg-electric-iris text-bone-white font-semibold"
-                        : "text-ash-gray hover:text-bone-white"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Panel Display Stage */}
-              <div className="w-full bg-[#080808] rounded-3xl p-6 sm:p-10 border border-[#161616] flex flex-col items-center justify-center">
-                {bhawaniActiveTab === "all" && (
+              if (tile.type === "presentation" || tile.type === "image" || tile.type === "detail") {
+                return (
                   <div
+                    key={idx}
                     onClick={() => openLightboxWithAsset(0)}
-                    className="w-full max-w-2xl cursor-zoom-in group flex flex-col items-center"
+                    className={`${colClass} group relative rounded-3xl bg-[#080808] border border-[#181818] overflow-hidden cursor-zoom-in transition-all duration-300 hover:border-[#2a2a2a]`}
                   >
-                    <img
-                      src="/assets/bhawani_full_web.png"
-                      alt="Bhawani Moulders Full Master Publication"
-                      className="w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                    />
-                    <div className="mt-4 text-[12px] font-mono text-ash-gray flex items-center gap-2">
-                      <Maximize2 className="w-3.5 h-3.5 text-saffron-spark" />
-                      <span>Original Continuous Master Artwork (4960 × 10521 px)</span>
+                    <div className={`w-full ${tile.aspect || "aspect-[16/10]"} flex items-center justify-center p-6 sm:p-10 relative`}>
+                      <img
+                        src={tile.image}
+                        alt={tile.title}
+                        className="max-h-full max-w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                      {/* Zoom prompt icon on hover */}
+                      <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-void/80 border border-[#2a2a2a] flex items-center justify-center text-ash-gray group-hover:text-bone-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <div className="p-6 border-t border-[#141414] bg-[#060606] flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[16px] font-medium text-bone-white">
+                          {tile.title}
+                        </span>
+                        {tile.subtitle && (
+                          <span className="text-[12px] font-mono text-ash-gray">
+                            {tile.subtitle}
+                          </span>
+                        )}
+                      </div>
+                      {tile.description && (
+                        <p className="text-[13px] text-silver-mist font-light leading-relaxed">
+                          {tile.description}
+                        </p>
+                      )}
                     </div>
                   </div>
-                )}
+                );
+              }
 
-                {bhawaniActiveTab === "p1" && (
+              if (tile.type === "color-swatch") {
+                const isCopied = copiedHex === tile.color;
+                return (
                   <div
-                    onClick={() => openLightboxWithAsset(1)}
-                    className="w-full max-w-3xl cursor-zoom-in group flex flex-col items-center"
+                    key={idx}
+                    onClick={() => tile.color && handleCopyHex(tile.color)}
+                    className={`${colClass} group relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-300 border border-[#1a1a1a] hover:border-[#333333]`}
                   >
-                    <img
-                      src="/assets/bhawani_panel_1_cover.png"
-                      alt="Bhawani Moulders Cover Panel"
-                      className="w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                    />
-                    <div className="mt-4 text-[12px] font-mono text-ash-gray">
-                      Panel 1: Corporate Cover, Hexagonal Monogram & Contact Infrastructure
+                    <div
+                      className={`w-full ${tile.aspect || "aspect-[4/3]"} p-8 flex flex-col justify-between relative`}
+                      style={{ backgroundColor: tile.color }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          className="text-[12px] font-mono uppercase tracking-wider px-3 py-1 rounded-full bg-void/30 backdrop-blur-sm"
+                          style={{ color: tile.textColor || "#FFFFFF" }}
+                        >
+                          {tile.subtitle}
+                        </span>
+                        <div
+                          className="w-8 h-8 rounded-full bg-void/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          style={{ color: tile.textColor || "#FFFFFF" }}
+                        >
+                          {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <span
+                          className="text-[28px] sm:text-[34px] font-normal tracking-[-1px]"
+                          style={{ color: tile.textColor || "#FFFFFF" }}
+                        >
+                          {tile.color}
+                        </span>
+                        <span
+                          className="text-[14px] font-light opacity-90"
+                          style={{ color: tile.textColor || "#FFFFFF" }}
+                        >
+                          {tile.title}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5 bg-[#0a0a0a] border-t border-[#161616]">
+                      <p className="text-[13px] text-silver-mist font-light">
+                        {tile.description}
+                      </p>
                     </div>
                   </div>
-                )}
+                );
+              }
 
-                {bhawaniActiveTab === "p2" && (
+              if (tile.type === "type-specimen") {
+                return (
                   <div
-                    onClick={() => openLightboxWithAsset(2)}
-                    className="w-full max-w-3xl cursor-zoom-in group flex flex-col items-center"
+                    key={idx}
+                    className={`${colClass} rounded-3xl bg-[#090909] border border-[#181818] p-8 sm:p-10 flex flex-col justify-between gap-6`}
                   >
-                    <img
-                      src="/assets/bhawani_panel_2_products.png"
-                      alt="Bhawani Moulders Products Panel"
-                      className="w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                    />
-                    <div className="mt-4 text-[12px] font-mono text-ash-gray">
-                      Panel 2: Structural Steel, Angles, Channels & Long Products
+                    <div className="flex items-center justify-between">
+                      <span className="text-[12px] font-mono uppercase tracking-wider text-saffron-spark">
+                        Typography Specimen
+                      </span>
+                      <span className="text-[12px] font-mono text-ash-gray">
+                        {tile.subtitle}
+                      </span>
+                    </div>
+
+                    <div className="py-4">
+                      <div className="text-[44px] sm:text-[60px] font-normal leading-none tracking-[-1.5px] text-bone-white mb-4">
+                        Aa Gg Rr 09
+                      </div>
+                      <div className="text-[15px] font-mono text-ash-gray tracking-wider opacity-60 break-all">
+                        ABCDEFGHIJKLMN OPQRSTUVWXYZ 0123456789
+                      </div>
+                    </div>
+
+                    <div className="border-t border-[#161616] pt-4">
+                      <h4 className="text-[16px] text-bone-white font-medium mb-1">
+                        {tile.title}
+                      </h4>
+                      <p className="text-[13px] text-silver-mist font-light leading-relaxed">
+                        {tile.description}
+                      </p>
                     </div>
                   </div>
-                )}
+                );
+              }
 
-                {bhawaniActiveTab === "p3" && (
-                  <div
-                    onClick={() => openLightboxWithAsset(3)}
-                    className="w-full max-w-3xl cursor-zoom-in group flex flex-col items-center"
-                  >
-                    <img
-                      src="/assets/bhawani_panel_3_services.png"
-                      alt="Bhawani Moulders Services Panel"
-                      className="w-full rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                    />
-                    <div className="mt-4 text-[12px] font-mono text-ash-gray">
-                      Panel 3: Fabrication Services, Quality Assurance & Workshop Photography
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* CUSTOM SHOWCASE FOR KALPAVRAKSH */}
-          {project.slug === "kalpavraksh" && (
-            <div className="flex flex-col gap-8">
-              <div
-                onClick={() => openLightboxWithAsset(0)}
-                className="group relative w-full max-w-3xl mx-auto aspect-[1545/2000] bg-[#FFFFFA] rounded-3xl p-6 sm:p-10 shadow-2xl border border-[#222222] cursor-zoom-in overflow-hidden"
-              >
-                <img
-                  src="/assets/kalpavraksh_diwali_flyer.png"
-                  alt="Kalpavraksh Diwali Flyer"
-                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                />
-                <div className="absolute bottom-6 right-6 flex items-center gap-2 bg-[#1B365D] text-bone-white px-4 py-2 rounded-full text-[12px] font-mono shadow-xl">
-                  <Maximize2 className="w-4 h-4 text-saffron-spark" />
-                  <span>Inspect Complete Uncropped Flyer (1545 × 2000 px)</span>
-                </div>
-              </div>
-
-              {/* Cultural Ornamentation Breakdown */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    Mandala Corner Framing
-                  </span>
-                  <div className="text-[16px] text-bone-white font-medium">Geometric Floral Arches</div>
-                  <p className="text-[14px] text-silver-mist font-light leading-relaxed">
-                    Intricate symmetrical rangoli mandalas in royal navy and turquoise ground the upper corners with festive architecture.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    Toran Garland Strings
-                  </span>
-                  <div className="text-[16px] text-bone-white font-medium">Suspended Marigold Diyas</div>
-                  <p className="text-[14px] text-silver-mist font-light leading-relaxed">
-                    Golden flower beads suspend brass-effect diya lanterns from the top ceiling, evoking traditional home celebration portals.
-                  </p>
-                </div>
-
-                <div className="p-6 bg-[#080808] rounded-2xl border border-[#181818] flex flex-col gap-2">
-                  <span className="text-[12px] font-mono text-saffron-spark uppercase">
-                    Lotus Foundation
-                  </span>
-                  <div className="text-[16px] text-bone-white font-medium">Sacred Oil Lamps</div>
-                  <p className="text-[14px] text-silver-mist font-light leading-relaxed">
-                    A dual-tiered base of illuminated clay lamps nestled inside golden lotus petals creates harmony and visual stability.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ========================================================= */}
-      {/* 03 — COLOUR EXPLORATION                                   */}
-      {/* ========================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 py-16 border-t border-[#121212]">
-        <div className="flex flex-col gap-8">
-          <div>
-            <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
-              03 — Colour Architecture
-            </span>
-            <h2 className="text-[36px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white">
-              Extracted Palette.
-            </h2>
-            <p className="text-[16px] font-body-ultralight text-silver-mist max-w-xl mt-1">
-              Exact hex values and chromatic hierarchies extracted directly from the verified source assets.
-            </p>
+              return null;
+            })}
           </div>
-
-          <ColorPaletteViewer colors={project.colors} />
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 04 — TYPOGRAPHY SPECIMEN                                  */}
+      {/* 03 — VISUAL CONCEPT & MOTIFS                              */}
       {/* ========================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 py-16 border-t border-[#121212]">
-        <div className="flex flex-col gap-8">
-          <div>
-            <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
-              04 — Typographic Taxonomy
-            </span>
-            <h2 className="text-[36px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white">
-              Type & Letterform Hierarchy.
-            </h2>
-            <p className="text-[16px] font-body-ultralight text-silver-mist max-w-xl mt-1">
-              Letterform taxonomy, geometry analysis, and recommended digital font pairings.
-            </p>
-          </div>
-
-          <TypographyViewer specs={project.typography} />
-        </div>
-      </section>
-
-      {/* ========================================================= */}
-      {/* 05 — VISUAL LANGUAGE & MOTIFS                             */}
-      {/* ========================================================= */}
-      <section className="max-w-[1280px] mx-auto px-6 py-16 border-t border-[#121212]">
+      <section className="max-w-[1280px] mx-auto px-6 py-20 border-t border-[#121212]">
         <div className="flex flex-col gap-10">
           <div>
-            <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
-              05 — Visual Language
+            <span className="text-[13px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
+              Visual Strategy
             </span>
-            <h2 className="text-[36px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white">
-              Graphic Motifs & Structure.
+            <h2 className="text-[36px] sm:text-[46px] font-normal tracking-[-1.68px] text-bone-white">
+              Design Elements & Motifs.
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {project.visualLanguage.motifs.map((motif, idx) => (
+            {project.motifs.map((motif, idx) => (
               <div
                 key={motif.title}
                 className="flex flex-col gap-3 p-8 rounded-3xl bg-[#080808] border border-[#161616]"
@@ -596,45 +326,59 @@ export default function ProjectDetailView({
               </div>
             ))}
           </div>
-
-          <div className="p-6 bg-[#0a0a0a] rounded-2xl border border-[#1a1a1a] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[13px] font-mono text-ash-gray">
-            <div>
-              <strong className="text-bone-white">Grid System:</strong> {project.visualLanguage.gridConcept}
-            </div>
-            <div>
-              <strong className="text-bone-white">Composition Rhythm:</strong> {project.visualLanguage.compositionStyle}
-            </div>
-          </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* 06 — REAL-WORLD BRAND APPLICATIONS                        */}
+      {/* 04 — ORIGINAL VERIFIED ASSET LISTING                      */}
       {/* ========================================================= */}
       <section className="max-w-[1280px] mx-auto px-6 py-16 border-t border-[#121212]">
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-8">
           <div>
-            <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
-              06 — Real-World Applications
+            <span className="text-[13px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
+              Source Archive
             </span>
-            <h2 className="text-[36px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white">
-              Application Contexts.
+            <h2 className="text-[32px] sm:text-[40px] font-normal tracking-[-1.5px] text-bone-white">
+              Original Files ({project.assets.length}).
             </h2>
-            <p className="text-[16px] font-body-ultralight text-silver-mist max-w-xl mt-1">
-              Demonstrating adaptability across physical and digital touchpoints using the original vector and pixel artwork.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {project.applications.map((app) => (
-              <MockupDevice key={app.title} app={app} project={project} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {project.assets.map((asset, i) => (
+              <div
+                key={asset.id}
+                onClick={() => openLightboxWithAsset(i)}
+                className="p-5 rounded-2xl bg-[#090909] border border-[#181818] hover:border-[#2a2a2a] cursor-zoom-in flex items-center justify-between gap-4 transition-colors"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-14 h-14 rounded-xl bg-void border border-[#222222] p-2 flex items-center justify-center shrink-0">
+                    <img
+                      src={asset.url}
+                      alt={asset.title}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[15px] text-bone-white font-medium truncate">
+                      {asset.title}
+                    </span>
+                    <span className="text-[12px] font-mono text-ash-gray">
+                      {asset.originalFileName} • {asset.dimensions}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-2 text-ash-gray hover:text-electric-iris rounded-full transition-colors shrink-0">
+                  <Eye className="w-5 h-5" />
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* NEXT PROJECT CONTINUATION BAR                             */}
+      {/* NEXT CASE STUDY BANNER                                    */}
       {/* ========================================================= */}
       {nextProject && (
         <section className="max-w-[1280px] mx-auto px-6 py-20 border-t border-[#161616]">
@@ -650,7 +394,7 @@ export default function ProjectDetailView({
                 {nextProject.title}
               </h3>
               <p className="text-[15px] font-light text-ash-gray">
-                {nextProject.subtitle}
+                {nextProject.summary}
               </p>
             </div>
 
@@ -669,7 +413,7 @@ export default function ProjectDetailView({
         onClose={() => setLightboxOpen(false)}
       />
 
-      {/* Asset Analysis Modal */}
+      {/* Asset Pipeline Modal */}
       <AssetAnalysisModal
         isOpen={isPipelineOpen}
         onClose={() => setIsPipelineOpen(false)}
