@@ -3,8 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Sparkles, Filter, Layers } from "lucide-react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/Navbar";
 import ConstellationCanvas from "@/components/ConstellationCanvas";
 import AmbientParticles from "@/components/AmbientParticles";
@@ -12,10 +10,6 @@ import ProjectCard from "@/components/ProjectCard";
 import AssetAnalysisModal from "@/components/AssetAnalysisModal";
 import LineReveal from "@/components/LineReveal";
 import { PROJECTS } from "@/data/projects";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 export default function HomePage() {
   const [selectedFilter, setSelectedFilter] = useState("All Work");
@@ -41,66 +35,83 @@ export default function HomePage() {
       ? PROJECTS
       : PROJECTS.filter((p) => p.categories.includes(selectedFilter));
 
-  // GSAP Layered Scroll Parallax
+  // Dynamic GSAP Layered Scroll Parallax (Client Only)
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // 1. Hero text parallax depth drift
-      if (heroTextRef.current) {
-        gsap.to(heroTextRef.current, {
-          yPercent: 25,
-          opacity: 0.2,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-      }
+    let ctx: any = null;
+    let isCancelled = false;
 
-      // 2. Parallax floating effect on selected works section
-      const cards = document.querySelectorAll(".project-card-parallax");
-      cards.forEach((card, i) => {
-        const speed = i % 2 === 0 ? -30 : 30; // alternate vertical speeds
-        gsap.fromTo(
-          card,
-          { y: speed },
-          {
-            y: -speed,
+    Promise.all([
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+    ]).then(([gsapModule, stModule]) => {
+      if (isCancelled) return;
+
+      const { gsap } = gsapModule;
+      const { ScrollTrigger } = stModule;
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        // 1. Hero text parallax depth drift
+        if (heroTextRef.current && heroSectionRef.current) {
+          gsap.to(heroTextRef.current, {
+            yPercent: 25,
+            opacity: 0.25,
             ease: "none",
             scrollTrigger: {
-              trigger: card,
-              start: "top bottom",
+              trigger: heroSectionRef.current,
+              start: "top top",
               end: "bottom top",
               scrub: true,
             },
-          }
-        );
-      });
+          });
+        }
 
-      // 3. Staggered reveal for section subheads
-      const fadeElements = document.querySelectorAll(".gsap-fade-in");
-      fadeElements.forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 35 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1.1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
-      });
-    });
+        // 2. Parallax floating effect on selected works section
+        const cards = document.querySelectorAll(".project-card-parallax");
+        cards.forEach((card, i) => {
+          const speed = i % 2 === 0 ? -30 : 30; // alternate vertical speeds
+          gsap.fromTo(
+            card,
+            { y: speed },
+            {
+              y: -speed,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        });
 
-    return () => ctx.revert();
+        // 3. Staggered reveal for section subheads
+        const fadeElements = document.querySelectorAll(".gsap-fade-in");
+        fadeElements.forEach((el) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 35 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1.1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 85%",
+                once: true,
+              },
+            }
+          );
+        });
+      });
+    }).catch(() => {});
+
+    return () => {
+      isCancelled = true;
+      if (ctx) ctx.revert();
+    };
   }, [filteredProjects]);
 
   return (
@@ -191,7 +202,6 @@ export default function HomePage() {
 
       {/* ========================================================= */}
       {/* 2ND SECTION: "Make decisions with confidence."            */}
-      {/* (Directly matching frame 7 of the animation reference!)    */}
       {/* ========================================================= */}
       <section
         ref={decisionSectionRef}

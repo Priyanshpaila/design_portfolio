@@ -1,52 +1,70 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import Lenis from "lenis";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname } from "next/navigation";
 
-// Register ScrollTrigger once on the client
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null);
+  const lenisRef = useRef<any>(null);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential deceleration curve
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+    let lenisInstance: any = null;
+    let tickerHandler: any = null;
+    let isCancelled = false;
+
+    // Load Lenis and GSAP strictly in client runtime
+    Promise.all([
+      import("lenis"),
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+    ]).then(([LenisModule, gsapModule, scrollTriggerModule]) => {
+      if (isCancelled) return;
+
+      const Lenis = LenisModule.default;
+      const { gsap } = gsapModule;
+      const { ScrollTrigger } = scrollTriggerModule;
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      lenisInstance = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential deceleration curve
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        wheelMultiplier: 0.9,
+        touchMultiplier: 1.5,
+      });
+
+      lenisRef.current = lenisInstance;
+
+      // Sync Lenis scroll with GSAP ScrollTrigger
+      lenisInstance.on("scroll", ScrollTrigger.update);
+
+      // Connect to GSAP ticker
+      tickerHandler = (time: number) => {
+        lenisInstance.raf(time * 1000);
+      };
+
+      gsap.ticker.add(tickerHandler);
+      gsap.ticker.lagSmoothing(0);
+
+      (window as any).__lenis = lenisInstance;
+    }).catch((err) => {
+      console.warn("Smooth scroll initialization notice:", err);
     });
 
-    lenisRef.current = lenis;
-
-    // Sync Lenis scroll with GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
-
-    // Drive Lenis from GSAP's internal high-performance ticker
-    const updateTicker = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-
-    gsap.ticker.add(updateTicker);
-    gsap.ticker.lagSmoothing(0);
-
-    // Global helper so other components can access Lenis if needed
-    (window as any).__lenis = lenis;
-
     return () => {
-      gsap.ticker.remove(updateTicker);
-      lenis.destroy();
-      (window as any).__lenis = null;
+      isCancelled = true;
+      if (lenisInstance) {
+        lenisInstance.destroy();
+        (window as any).__lenis = null;
+      }
+      if (tickerHandler) {
+        import("gsap").then(({ gsap }) => {
+          gsap.ticker.remove(tickerHandler);
+        }).catch(() => {});
+      }
     };
   }, []);
 

@@ -1,12 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface LineRevealProps {
   lines: string[];
@@ -38,43 +32,67 @@ export default function LineReveal({
     const lineElements = el.querySelectorAll(".line-reveal-inner");
     if (!lineElements.length) return;
 
-    // Set initial position hidden below mask
-    gsap.set(lineElements, {
-      yPercent: 120,
-      opacity: 0,
-      rotateX: 10,
-    });
+    let cleanup: (() => void) | undefined;
+    let isCancelled = false;
 
-    const animConfig = {
-      yPercent: 0,
-      opacity: 1,
-      rotateX: 0,
-      duration,
-      stagger,
-      delay,
-      ease: "power4.out",
-    };
+    // Load GSAP strictly on the client
+    Promise.all([
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+    ]).then(([gsapModule, stModule]) => {
+      if (isCancelled) return;
 
-    if (triggerOnScroll) {
-      const st = ScrollTrigger.create({
-        trigger: el,
-        start: "top 88%",
-        onEnter: () => {
-          gsap.to(lineElements, animConfig);
-        },
-        once: true,
+      const { gsap } = gsapModule;
+      const { ScrollTrigger } = stModule;
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.set(lineElements, {
+        yPercent: 120,
+        opacity: 0,
+        rotateX: 10,
       });
 
-      return () => {
-        st.kill();
+      const animConfig = {
+        yPercent: 0,
+        opacity: 1,
+        rotateX: 0,
+        duration,
+        stagger,
+        delay,
+        ease: "power4.out",
       };
-    } else {
-      // Immediate entrance (e.g. for hero section)
-      const tween = gsap.to(lineElements, animConfig);
-      return () => {
-        tween.kill();
-      };
-    }
+
+      if (triggerOnScroll) {
+        const st = ScrollTrigger.create({
+          trigger: el,
+          start: "top 88%",
+          onEnter: () => {
+            gsap.to(lineElements, animConfig);
+          },
+          once: true,
+        });
+
+        cleanup = () => {
+          st.kill();
+        };
+      } else {
+        const tween = gsap.to(lineElements, animConfig);
+        cleanup = () => {
+          tween.kill();
+        };
+      }
+    }).catch(() => {
+      // Fallback: if GSAP fails to load, make lines visible immediately
+      lineElements.forEach((line) => {
+        (line as HTMLElement).style.opacity = "1";
+        (line as HTMLElement).style.transform = "none";
+      });
+    });
+
+    return () => {
+      isCancelled = true;
+      if (cleanup) cleanup();
+    };
   }, [lines, delay, duration, stagger, triggerOnScroll]);
 
   return (
