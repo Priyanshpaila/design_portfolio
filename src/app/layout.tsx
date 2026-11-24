@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://portfolio-dala.vercel.app"),
-  title: "Graphic Design Portfolio — Visual Case Studies",
+  title: "Unlock collective wisdom. — Dala Design Archive",
   description:
-    "Professional graphic design portfolio featuring art-directed case studies across brand identity, editorial design, campaign creatives, and digital systems.",
+    "Monolithic dark-stage design environment where black voids meet electric iris accents and a signature brain constellation. Art-directed case studies across brand identity, editorial design, and digital systems.",
 };
 
 export const viewport: Viewport = {
@@ -32,9 +33,11 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-void text-bone-white min-h-screen selection:bg-electric-iris selection:text-bone-white antialiased">
-        <div id="top" />
-        {children}
-        <Footer />
+        <SmoothScroll>
+          <div id="top" />
+          {children}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );

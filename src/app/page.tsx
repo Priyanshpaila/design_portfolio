@@ -1,18 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Sparkles, Filter, Layers } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/Navbar";
 import ConstellationCanvas from "@/components/ConstellationCanvas";
 import AmbientParticles from "@/components/AmbientParticles";
 import ProjectCard from "@/components/ProjectCard";
 import AssetAnalysisModal from "@/components/AssetAnalysisModal";
+import LineReveal from "@/components/LineReveal";
 import { PROJECTS } from "@/data/projects";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function HomePage() {
   const [selectedFilter, setSelectedFilter] = useState("All Work");
   const [isPipelineOpen, setIsPipelineOpen] = useState(false);
+
+  // Parallax container refs
+  const heroSectionRef = useRef<HTMLDivElement | null>(null);
+  const heroTextRef = useRef<HTMLDivElement | null>(null);
+  const decisionSectionRef = useRef<HTMLDivElement | null>(null);
+  const worksSectionRef = useRef<HTMLDivElement | null>(null);
 
   const filterCategories = [
     "All Work",
@@ -28,44 +41,122 @@ export default function HomePage() {
       ? PROJECTS
       : PROJECTS.filter((p) => p.categories.includes(selectedFilter));
 
+  // GSAP Layered Scroll Parallax
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Hero text parallax depth drift
+      if (heroTextRef.current) {
+        gsap.to(heroTextRef.current, {
+          yPercent: 25,
+          opacity: 0.2,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroSectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      }
+
+      // 2. Parallax floating effect on selected works section
+      const cards = document.querySelectorAll(".project-card-parallax");
+      cards.forEach((card, i) => {
+        const speed = i % 2 === 0 ? -30 : 30; // alternate vertical speeds
+        gsap.fromTo(
+          card,
+          { y: speed },
+          {
+            y: -speed,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
+      });
+
+      // 3. Staggered reveal for section subheads
+      const fadeElements = document.querySelectorAll(".gsap-fade-in");
+      fadeElements.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, [filteredProjects]);
+
   return (
     <main className="w-full bg-void min-h-screen relative overflow-hidden">
-      {/* Ambient background drifting triangles outside the hero constellation */}
-      <AmbientParticles count={40} />
+      {/* Background ambient drifting particles */}
+      <AmbientParticles count={35} />
 
       {/* Top Navbar */}
       <Navbar onOpenPipeline={() => setIsPipelineOpen(true)} />
 
       {/* ========================================================= */}
-      {/* HERO SECTION — Dala Asymmetric Split                      */}
-      {/* Left: Oversized 78-113px Display Headline + Ultra-Light Body */}
-      {/* Right: Signature Brain-Shape Particle Constellation       */}
+      {/* HERO SECTION — Matching Dala Reference Image & Video      */}
+      {/* Left: Line Reveal "Unlock collective wisdom."             */}
+      {/* Right: Signature Brain Constellation & Floating 3D Prisms */}
       {/* ========================================================= */}
-      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 md:py-20 max-w-[1280px] mx-auto">
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center z-10">
-          {/* Left Column: Typographic Monument (7 cols on lg) */}
-          <div className="lg:col-span-7 flex flex-col items-start gap-8">
-            {/* Amber Label Token */}
-            <div className="flex items-center gap-2">
-              <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
-                Visual Intelligence & Identity Archive
+      <section
+        ref={heroSectionRef}
+        className="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 md:py-20 max-w-[1280px] mx-auto overflow-visible"
+      >
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center z-10">
+          {/* Left Column: Line Reveal Typography */}
+          <div
+            ref={heroTextRef}
+            className="lg:col-span-6 flex flex-col items-start gap-8 z-20"
+          >
+            {/* Amber Uppercase Label Token */}
+            <div className="gsap-fade-in flex items-center gap-2">
+              <span className="text-[13px] sm:text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
+                STOP MANAGING KNOWLEDGE. START USING IT.
               </span>
             </div>
 
-            {/* Oversized Monolithic Display Headline (Weight 400, Negative Tracking) */}
-            <h1 className="text-[54px] sm:text-[78px] lg:text-[96px] xl:text-[104px] font-normal leading-[0.98] tracking-[-3.12px] xl:tracking-[-4.52px] text-bone-white font-sans">
-              Your workplace has the answer. Just ask Dala for it.
-            </h1>
+            {/* Line Reveal Monolithic Display Headline (Weight 400, Tracking -0.04em) */}
+            <LineReveal
+              as="h1"
+              lines={["Unlock", "collective", "wisdom."]}
+              className="text-[62px] sm:text-[88px] lg:text-[104px] xl:text-[113px] font-normal leading-[0.94] tracking-[-3.12px] xl:tracking-[-4.52px] text-bone-white font-sans"
+              duration={1.3}
+              stagger={0.14}
+              triggerOnScroll={false}
+            />
 
             {/* Ultra-Light (200) Body Copy */}
-            <p className="text-[18px] sm:text-[20px] font-body-ultralight text-silver-mist leading-[1.5] max-w-[540px]">
-              A curated graphic design archive transforming commercial brand identities, bilingual typography, structural steel editorial publications, and festival creatives into monolithic visual case studies.
-            </p>
+            <div className="gsap-fade-in flex flex-col gap-3">
+              <p className="text-[18px] sm:text-[20px] font-body-ultralight text-silver-mist leading-[1.5] max-w-[500px]">
+                Plug into your team's shared brainpower. Ask Dala to instantly find anything or anyone from any workplace system. Focus on doing your best work with context, conviction and clarity.
+              </p>
+              <div className="text-[13px] font-mono text-ash-gray tracking-wide">
+                Your workplace has the answer. Just ask Dala for it.
+              </div>
+            </div>
 
             {/* Primary Action Button (Filled Violet Pill #8052ff) & Ghost Link */}
-            <div className="flex flex-wrap items-center gap-6 pt-2">
+            <div className="gsap-fade-in flex flex-wrap items-center gap-6 pt-2">
               <a href="#selected-works" className="btn-electric-pill">
-                <span>Explore Selected Works</span>
+                <span>Request Access</span>
                 <ArrowDown className="w-4 h-4" />
               </a>
 
@@ -79,22 +170,54 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Right Column: Signature Brain-Shape Particle Constellation (5 cols on lg) */}
-          <div className="lg:col-span-5 h-[420px] sm:h-[520px] lg:h-[620px] relative w-full flex items-center justify-center">
-            {/* Constellation Canvas */}
+          {/* Right Column: Signature 3D Brain Constellation & Floating Wireframe Polyhedra */}
+          <div className="lg:col-span-6 h-[480px] sm:h-[580px] lg:h-[720px] relative w-full flex items-center justify-center">
             <div className="w-full h-full relative">
               <ConstellationCanvas className="w-full h-full" interactive={true} />
-              
-              {/* Subtle caption token */}
-              <div className="absolute bottom-2 right-2 text-right pointer-events-none opacity-40">
+
+              {/* Bottom Subtle Signature Tag */}
+              <div className="absolute bottom-4 right-4 text-right pointer-events-none opacity-40">
                 <span className="text-[11px] font-mono text-ash-gray uppercase tracking-widest block">
-                  Signature Gesture
+                  Constellation on Black Velvet
                 </span>
                 <span className="text-[10px] font-mono text-silver-mist">
-                  Neural Knowledge Constellation
+                  Lateral Cerebral Topology & 3D Geometry
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* 2ND SECTION: "Make decisions with confidence."            */}
+      {/* (Directly matching frame 7 of the animation reference!)    */}
+      {/* ========================================================= */}
+      <section
+        ref={decisionSectionRef}
+        className="max-w-[1280px] mx-auto px-6 py-24 sm:py-32 border-t border-[#121212] relative z-10"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-6 flex flex-col gap-6">
+            <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
+              Decision Intelligence
+            </span>
+            <LineReveal
+              as="h2"
+              lines={["Make decisions", "with confidence"]}
+              className="text-[44px] sm:text-[64px] lg:text-[72px] font-normal leading-[1.04] tracking-[-2.6px] text-bone-white font-sans"
+              duration={1.2}
+              stagger={0.12}
+            />
+          </div>
+
+          <div className="lg:col-span-6 flex flex-col gap-4">
+            <p className="gsap-fade-in text-[18px] sm:text-[20px] font-body-ultralight text-silver-mist leading-[1.6]">
+              Dala's bleeding-edge AI search tool automates extracting knowledge from across your organisation so that you can take the guesswork out of your work.
+            </p>
+            <p className="gsap-fade-in text-[16px] font-body-ultralight text-ash-gray leading-[1.5]">
+              Presented here as a sculptural graphic design case study portfolio, bridging original raw brand assets, bilingual typography, industrial steel publications, and festival creatives into monolithic visual clarity.
+            </p>
           </div>
         </div>
       </section>
@@ -105,15 +228,19 @@ export default function HomePage() {
       <section className="max-w-[1280px] mx-auto px-6 py-20 border-t border-[#121212]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-6">
-            <h2 className="text-[48px] sm:text-[68px] font-normal leading-[1.05] tracking-[-2.4px] text-bone-white font-sans">
-              Original artwork. Structured without compromise.
-            </h2>
+            <LineReveal
+              as="h2"
+              lines={["Original artwork.", "Structured without", "compromise."]}
+              className="text-[44px] sm:text-[60px] font-normal leading-[1.05] tracking-[-2.2px] text-bone-white font-sans"
+              duration={1.2}
+              stagger={0.12}
+            />
           </div>
           <div className="lg:col-span-6 flex flex-col gap-4">
             <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
               The Art-Direction Standard
             </span>
-            <p className="text-[18px] font-body-ultralight text-silver-mist leading-[1.5]">
+            <p className="gsap-fade-in text-[18px] font-body-ultralight text-silver-mist leading-[1.6]">
               Every project in this collection is built directly from original client assets produced during professional employment. No stock placeholders, no fabricated metrics, no generic card borders. The work speaks through high-resolution raster integrity, typographic taxonomy, and real-world application mockups.
             </p>
           </div>
@@ -122,9 +249,13 @@ export default function HomePage() {
 
       {/* ========================================================= */}
       {/* SELECTED WORKS SECTION                                    */}
-      {/* Filterable categories + Asymmetric Two-Column Grid        */}
+      {/* Filterable categories + Asymmetric Layered Parallax Grid  */}
       {/* ========================================================= */}
-      <section id="selected-works" className="max-w-[1280px] mx-auto px-6 py-16 scroll-mt-24">
+      <section
+        id="selected-works"
+        ref={worksSectionRef}
+        className="max-w-[1280px] mx-auto px-6 py-16 scroll-mt-24"
+      >
         {/* Section Header with Category Filter Bar */}
         <div className="flex flex-col gap-8 mb-12">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
@@ -132,9 +263,11 @@ export default function HomePage() {
               <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono block mb-2">
                 Portfolio Index
               </span>
-              <h3 className="text-[42px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white font-sans">
-                Selected Works.
-              </h3>
+              <LineReveal
+                as="h3"
+                lines={["Selected Works."]}
+                className="text-[42px] sm:text-[48px] font-normal tracking-[-1.68px] text-bone-white font-sans"
+              />
             </div>
             <div className="text-[14px] text-ash-gray font-mono">
               Showing {filteredProjects.length} of {PROJECTS.length} Projects
@@ -162,10 +295,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Floating Project Grid (No card borders, no shadows, 24px image radius) */}
+        {/* Floating Project Grid with Layered Parallax Depth */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
           {filteredProjects.map((project, idx) => (
-            <ProjectCard key={project.id} project={project} index={idx} />
+            <div key={project.id} className="project-card-parallax">
+              <ProjectCard project={project} index={idx} />
+            </div>
           ))}
         </div>
       </section>
@@ -183,10 +318,15 @@ export default function HomePage() {
               <Sparkles className="w-4 h-4" />
               <span>Automated Project Ingestion Pipeline</span>
             </div>
-            <h3 className="text-[36px] sm:text-[44px] font-normal leading-[1.1] tracking-[-1.5px] text-bone-white font-sans">
-              Built for seamless expansion. Ingest raw assets into art-directed case studies.
-            </h3>
-            <p className="text-[17px] font-body-ultralight text-silver-mist leading-relaxed">
+            <LineReveal
+              as="h3"
+              lines={[
+                "Built for seamless expansion.",
+                "Ingest raw assets into case studies.",
+              ]}
+              className="text-[36px] sm:text-[44px] font-normal leading-[1.1] tracking-[-1.5px] text-bone-white font-sans"
+            />
+            <p className="gsap-fade-in text-[17px] font-body-ultralight text-silver-mist leading-relaxed">
               When new design assets are uploaded, our structured 6-phase pipeline audits pixel integrity, groups related brand variants, isolates exact hex palettes, detects typography, and synthesizes Behance-standard project documentation automatically.
             </p>
           </div>
@@ -212,10 +352,12 @@ export default function HomePage() {
             <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
               System Architecture
             </span>
-            <h3 className="text-[36px] sm:text-[42px] font-normal tracking-[-1.68px] text-bone-white font-sans">
-              Tokens & Design Truth.
-            </h3>
-            <p className="text-[17px] font-body-ultralight text-silver-mist max-w-xl">
+            <LineReveal
+              as="h3"
+              lines={["Tokens & Design Truth."]}
+              className="text-[36px] sm:text-[42px] font-normal tracking-[-1.68px] text-bone-white font-sans"
+            />
+            <p className="gsap-fade-in text-[17px] font-body-ultralight text-silver-mist max-w-xl">
               Strictly preserved from DESIGN.md. Pure void canvas, monolithic 400 headlines, signature 200 body copy, and single Electric Iris interactive pill.
             </p>
           </div>
