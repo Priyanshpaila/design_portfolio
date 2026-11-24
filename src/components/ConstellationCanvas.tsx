@@ -92,132 +92,68 @@ export default function ConstellationCanvas({
     ];
 
     // =========================================================================
-    // 1. GENERATE ANATOMICALLY SHAPED BRAIN PARTICLES (Lateral Profile)
+    // 1. GENERATE A 3D CONSTELLATION ENERGY ORB
     // =========================================================================
     const brainParticles: BrainParticle[] = [];
-    const TOTAL_BRAIN_PARTICLES = 2600;
+    const TOTAL_BRAIN_PARTICLES = 2800;
 
-    // Helper: test if point (x, y) is inside the lateral human brain silhouette
+    // A softly irregular spherical volume gives the particle field a clear,
+    // dimensional silhouette without resembling a literal object.
     function evaluateBrainPoint(x: number, y: number): { inside: boolean; isRim: boolean; type: string } {
-      // Coordinate space: x in [-0.85, 0.85], y in [-0.85, 0.85]
-      // Front of brain is at left (x < 0), Back/Occipital is at right (x > 0)
-      // Top is y < 0, Bottom is y > 0
-
-      // 1. Main Cerebral Cortex Dome (Frontal, Parietal, Occipital)
-      const cx = (x - 0.05) / 0.62;
-      const cy = (y + 0.12) / 0.52;
-      const rCortex = cx * cx + cy * cy;
-
-      // 2. Cerebellum Bulge (Lower posterior / bottom right)
-      const cbx = (x - 0.38) / 0.28;
-      const cby = (y - 0.38) / 0.22;
-      const rCereb = cbx * cbx + cby * cby;
-
-      // 3. Temporal Lobe Bulge (Lower anterior / bottom left)
-      const tx = (x + 0.18) / 0.32;
-      const ty = (y - 0.26) / 0.19;
-      const rTemp = tx * tx + ty * ty;
-
-      // 4. Brainstem (Tapering descending column from bottom center)
-      let inStem = false;
-      if (x >= -0.05 && x <= 0.22 && y >= 0.36 && y <= 0.88) {
-        const stemWidth = 0.11 - (y - 0.36) * 0.08;
-        const stemCenterX = 0.08 + (y - 0.36) * 0.03;
-        if (Math.abs(x - stemCenterX) < stemWidth) {
-          inStem = true;
-        }
-      }
-
-      // Cutout for front-bottom eye socket / facial void
-      if (x < -0.32 && y > 0.18) {
-        return { inside: false, isRim: false, type: "none" };
-      }
-
-      // Check if inside any main region
-      const inCortex = rCortex <= 1.0;
-      const inCereb = rCereb <= 1.0;
-      const inTemp = rTemp <= 1.0;
-
-      if (!inCortex && !inCereb && !inTemp && !inStem) {
-        return { inside: false, isRim: false, type: "none" };
-      }
-
-      // Determine if near the outer perimeter rim (for glowing golden halo)
-      const isRim =
-        (!inStem &&
-          ((inCortex && rCortex > 0.82) ||
-            (inCereb && rCereb > 0.8) ||
-            (inTemp && rTemp > 0.82) ||
-            (x < -0.45 && y < 0.1) ||
-            (y < -0.48)));
-
-      let region = "cortex";
-      if (inStem) region = "stem";
-      else if (inCereb) region = "cerebellum";
-      else if (inTemp) region = "temporal";
-
-      return { inside: true, isRim, type: region };
+      const nx = x / 0.76;
+      const ny = y / 0.76;
+      const radius = nx * nx + ny * ny;
+      return {
+        inside: radius <= 1,
+        isRim: radius > 0.82,
+        type: radius > 0.82 ? "rim" : "core",
+      };
     }
 
-    // Populate brain point cloud
+    // Populate the orb with front/back shell particles and a sparse inner core.
     let count = 0;
     let attempts = 0;
-    while (count < TOTAL_BRAIN_PARTICLES && attempts < 40000) {
+    while (count < TOTAL_BRAIN_PARTICLES && attempts < 50000) {
       attempts++;
-      const candidateX = (Math.random() - 0.5) * 1.8;
-      const candidateY = (Math.random() - 0.5) * 1.8;
-
+      const candidateX = (Math.random() - 0.5) * 1.55;
+      const candidateY = (Math.random() - 0.5) * 1.55;
       const evalResult = evaluateBrainPoint(candidateX, candidateY);
       if (!evalResult.inside) continue;
 
-      // Add organic cerebral sulci / gyri folds modulation
-      // Sulci wave patterns create the distinctive convolutions of human cortex
-      const foldFreq1 = Math.sin(candidateX * 9.0 + candidateY * 6.0);
-      const foldFreq2 = Math.cos(candidateX * 14.0 - candidateY * 11.0);
-      const gyriDensity = 0.5 + 0.5 * (foldFreq1 * 0.6 + foldFreq2 * 0.4);
+      const nx = candidateX / 0.76;
+      const ny = candidateY / 0.76;
+      const radial = Math.min(0.985, nx * nx + ny * ny);
+      const surfaceDepth = 0.48 * Math.sqrt(Math.max(0.02, 1 - radial));
+      const isFrontLayer = Math.random() > 0.5;
+      const shellDepth = surfaceDepth * (0.78 + Math.random() * 0.22);
+      const candidateZ = (Math.random() < 0.8
+        ? shellDepth
+        : Math.random() * surfaceDepth * 0.68) * (isFrontLayer ? 1 : -1);
 
-      // Skip some points in sulcal valleys to create dark void gaps between folds
-      if (!evalResult.isRim && evalResult.type !== "stem" && gyriDensity < 0.35) {
-        continue;
-      }
+      // A subtle radial ripple keeps the orb from looking mechanically perfect.
+      const ripple = Math.sin(Math.atan2(candidateY, candidateX) * 7 + radial * 9);
+      const organicScale = 1 + ripple * 0.012;
+      const bx = candidateX * organicScale;
+      const by = candidateY * organicScale;
 
-      // Calculate 3D hemisphere depth (Z)
-      // Thicker in the middle, curving toward the perimeter
-      const distFromCenter = Math.sqrt(candidateX * candidateX + candidateY * candidateY);
-      const maxZ = Math.max(0.08, 0.36 * Math.sqrt(Math.max(0, 1 - distFromCenter * 0.8)));
-      const candidateZ = (Math.random() - 0.5) * maxZ * 2;
-
-      // Determine particle color & luminosity
       let color: string;
       let baseAlpha: number;
       let size: number;
-
       if (evalResult.isRim) {
-        // Outer perimeter: Radiant Golden Halo
         color = GOLD_PALETTE[Math.floor(Math.random() * GOLD_PALETTE.length)];
-        baseAlpha = 0.75 + Math.random() * 0.25;
-        size = 1.4 + Math.random() * 1.8;
-      } else if (evalResult.type === "stem") {
-        // Brainstem: transitioning from gold/white to violet/blue at the tail
-        const stemProgress = (candidateY - 0.36) / 0.52;
-        color = stemProgress > 0.6 ? "#8052ff" : Math.random() > 0.5 ? "#ffd700" : "#ffffff";
-        baseAlpha = Math.max(0.3, 0.9 - stemProgress * 0.6);
-        size = 1.2 + Math.random() * 1.4;
+        baseAlpha = 0.72 + Math.random() * 0.28;
+        size = 1.35 + Math.random() * 1.8;
       } else {
-        // Interior lobes: multi-chromatic spectrum (Electric Iris, Magenta, Teal, Cyan, White)
-        // Accentuate outer folds with gold sparks
-        if (Math.random() < 0.28) {
-          color = GOLD_PALETTE[Math.floor(Math.random() * GOLD_PALETTE.length)];
-        } else {
-          color = CHROMATIC_PALETTE[Math.floor(Math.random() * CHROMATIC_PALETTE.length)];
-        }
-        baseAlpha = 0.45 + Math.random() * 0.5;
-        size = 1.3 + Math.random() * 1.6;
+        color = Math.random() < 0.22
+          ? GOLD_PALETTE[Math.floor(Math.random() * GOLD_PALETTE.length)]
+          : CHROMATIC_PALETTE[Math.floor(Math.random() * CHROMATIC_PALETTE.length)];
+        baseAlpha = 0.42 + Math.random() * 0.52;
+        size = 1.15 + Math.random() * 1.7;
       }
 
       brainParticles.push({
-        bx: candidateX,
-        by: candidateY,
+        bx,
+        by,
         bz: candidateZ,
         size,
         rotation: Math.random() * Math.PI * 2,
@@ -227,7 +163,6 @@ export default function ConstellationCanvas({
         baseAlpha,
         isRim: evalResult.isRim,
       });
-
       count++;
     }
 
@@ -380,7 +315,7 @@ export default function ConstellationCanvas({
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
 
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // Reposition ambient stars
       ambientStars.forEach((s) => {
@@ -605,18 +540,18 @@ export default function ConstellationCanvas({
       globalAngle += 0.0025;
       pulseTime += 0.02;
 
-      // Brain positioning: on the right half of the hero section
+      // Energy orb positioning: on the right half of the hero section
       // In wider screens, place it on the right; in mobile, centered
       const isMobile = width < 768;
       const brainCenterX = isMobile ? width * 0.5 : width * 0.58;
       const brainCenterY = height * 0.48 - currentScrollProgress * 140; // subtle upward scroll parallax
 
-      // Brain scale relative to canvas size
+      // Orb scale relative to canvas size
       const brainScale = Math.min(width, height) * (isMobile ? 0.44 : 0.48);
 
       // 3D rotation angles tied to mouse tilt + continuous drift + scroll
-      const rotY = globalAngle * 0.5 + currentTiltY + currentScrollProgress * 0.8;
-      const rotX = currentTiltX * 0.8 + currentScrollProgress * 0.3;
+      const rotY = globalAngle * 0.42 + currentTiltY * 1.18 + currentScrollProgress * 0.55;
+      const rotX = currentTiltX * 1.05 + Math.sin(globalAngle * 0.7) * 0.035 + currentScrollProgress * 0.22;
       const rotZ = currentTiltY * 0.15;
 
       const cosY = Math.cos(rotY);
@@ -624,7 +559,7 @@ export default function ConstellationCanvas({
       const cosX = Math.cos(rotX);
       const sinX = Math.sin(rotX);
 
-      // Project brain particles
+      // Project orb particles
       const projectedBrain: {
         x: number;
         y: number;
@@ -639,7 +574,7 @@ export default function ConstellationCanvas({
         const p = brainParticles[i];
         p.rotation += p.rotSpeed;
 
-        // Subtle organic breathing oscillation along cortex folds
+        // Gentle breathing motion keeps the particle volume alive
         const breathing = 1 + 0.015 * Math.sin(pulseTime + p.by * 4);
         const bx = p.bx * breathing;
         const by = p.by * breathing;
@@ -652,13 +587,14 @@ export default function ConstellationCanvas({
         const z2 = by * sinX + z1 * cosX;
 
         // Perspective projection
-        const fov = 2.8;
-        const perspective = fov / (fov + z2 * 0.55);
+        const fov = 2.45;
+        const perspective = fov / (fov - z2 * 0.42);
         const screenX = brainCenterX + x1 * brainScale * perspective;
         const screenY = brainCenterY + y2 * brainScale * perspective;
 
-        const depthAlpha = p.baseAlpha * Math.max(0.2, (z2 + 1.2) / 2.2);
-        const depthSize = p.size * perspective;
+        const depthLight = Math.max(0.28, Math.min(1.22, 0.72 + z2 * 0.34));
+        const depthAlpha = p.baseAlpha * Math.max(0.16, (z2 + 1.05) / 2.05) * depthLight;
+        const depthSize = p.size * perspective * (0.82 + depthLight * 0.2);
 
         projectedBrain.push({
           x: screenX,
@@ -673,6 +609,37 @@ export default function ConstellationCanvas({
 
       // Sort back to front for natural depth layering
       projectedBrain.sort((a, b) => a.z - b.z);
+
+      // Soft volumetric aura behind the energy orb.
+      ctx.save();
+      const brainAura = ctx.createRadialGradient(
+        brainCenterX, brainCenterY, brainScale * 0.08,
+        brainCenterX, brainCenterY, brainScale * 1.08
+      );
+      brainAura.addColorStop(0, "rgba(128, 82, 255, 0.105)");
+      brainAura.addColorStop(0.48, "rgba(0, 210, 255, 0.045)");
+      brainAura.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = brainAura;
+      ctx.beginPath();
+      ctx.ellipse(brainCenterX, brainCenterY, brainScale * 1.02, brainScale * 1.02, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Fine orbital arcs add scale and make the sphere read as a 3D energy core.
+      ctx.save();
+      ctx.translate(brainCenterX, brainCenterY);
+      ctx.lineWidth = 0.8;
+      ctx.globalAlpha = 0.22;
+      ctx.strokeStyle = "#00d2ff";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, brainScale * 1.12, brainScale * 0.34, globalAngle * 0.32, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 0.16;
+      ctx.strokeStyle = "#a855f7";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, brainScale * 1.08, brainScale * 0.29, -globalAngle * 0.24 + 0.9, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
 
       // Draw faint constellation interconnecting lines
       ctx.lineWidth = 0.5;
@@ -696,11 +663,29 @@ export default function ConstellationCanvas({
         }
       }
 
-      // Render brain particles
+      // Render volumetric particles as softly lit spherical beads.
+      // A restrained highlight on the upper-left edge gives each particle a 3D bead-like feel.
       for (let i = 0; i < projectedBrain.length; i++) {
         const p = projectedBrain[i];
-        drawTriangle(ctx, p.x, p.y, p.size, p.rot, p.color, p.alpha);
+        const radius = Math.max(0.55, p.size * 0.72);
+        ctx.save();
+        ctx.globalAlpha = Math.max(0.04, Math.min(1, p.alpha));
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = p.z > 0 ? 7 : 2.5;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha *= 0.62;
+        ctx.fillStyle = "rgba(255,255,255,0.9)";
+        ctx.beginPath();
+        ctx.arc(p.x - radius * 0.28, p.y - radius * 0.32, Math.max(0.3, radius * 0.25), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
+
+      ctx.globalAlpha = 1;
 
       // Render Floating 3D Wireframe Polyhedra
       floatingPolyhedra.forEach((poly) => {

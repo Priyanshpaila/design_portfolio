@@ -184,14 +184,14 @@ export default function HomePage() {
               <ConstellationCanvas className="w-full h-full" interactive={true} />
 
               {/* Bottom Subtle Signature Tag */}
-              <div className="absolute bottom-4 right-4 text-right pointer-events-none opacity-40">
+              {/* <div className="absolute bottom-4 right-4 text-right pointer-events-none opacity-40">
                 <span className="text-[11px] font-mono text-ash-gray uppercase tracking-widest block">
                   Constellation on Black Velvet
                 </span>
                 <span className="text-[10px] font-mono text-silver-mist">
                   Creative Brainpower • Distributed Visual Ideas
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
