@@ -20,8 +20,9 @@ export default function HomePage() {
     "Corporate Design",
     "Brochure & Editorial Design",
     "Digital Branding",
-    "Promotional Design",
+    "YouTube Thumbnails",
     "Festival Creative",
+    "Promotional Design",
   ];
 
   const filteredProjects =

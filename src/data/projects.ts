@@ -193,7 +193,7 @@ export const PROJECTS: ProjectData[] = [
       }
     ],
     nextSlug: "hira-atithi",
-    prevSlug: "kalpavraksh"
+    prevSlug: "cansa-square-independence"
   },
   {
     id: "project-02",
@@ -695,7 +695,259 @@ export const PROJECTS: ProjectData[] = [
         description: "Symmetrical burning clay oil lamps resting upon blooming lotus petals along the footer."
       }
     ],
-    nextSlug: "logi-yatra",
+    nextSlug: "grid-gaming-thumbnails",
     prevSlug: "bhawani-moulders"
+  },
+  {
+    id: "project-06",
+    slug: "grid-gaming-thumbnails",
+    title: "GRID — YouTube Thumbnails",
+    subtitle: "High-Impact Creator Graphics & Stream Packaging",
+    category: "Digital Branding / YouTube Thumbnails",
+    categories: ["Digital Branding", "YouTube Thumbnails", "Promotional Design"],
+    disciplines: ["YouTube Thumbnail Design", "Digital Illustration", "Visual Storytelling", "Stream Packaging"],
+    summary: "A dynamic suite of YouTube gaming thumbnails engineered for high click-through engagement, featuring stylized anime character integration, kinetic energy effects, and high-contrast typography.",
+    coverImage: "/assets/youtube_thumbnail_grid_fun_night.jpg",
+    visualPersonality: "Kinetic, cybernetic, energetic, bold, high-voltage",
+    statement: "Designed for competitive gaming content and live broadcasts. Each thumbnail combines cinematic character posing with intense atmospheric lighting, custom texturing, neon grid backdrops, and bold monolithic typography designed to stand out at small mobile scales.",
+    moodBoard: {
+      heroQuote: "Visual intensity engineered for rapid viewer capture and unmistakable streaming identity.",
+      tiles: [
+        {
+          type: "presentation",
+          title: "GRID Fun Night — Master Thumbnail",
+          subtitle: "Jett Knife Throw & Neon Grid (1920×1080)",
+          image: "/assets/youtube_thumbnail_grid_fun_night.jpg",
+          colSpan: "col-span-12 lg:col-span-8",
+          aspect: "aspect-[16/9]",
+          description: "High-energy composition featuring dynamic knife perspective, neon grid overlay, and vibrant magenta-purple backlighting."
+        },
+        {
+          type: "presentation",
+          title: "GRID Is Live — Broken Glass Cyberpunk",
+          subtitle: "Character Shatter Effect (1920×1080)",
+          image: "/assets/youtube_thumbnail_grid_is_live.jpg",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
+          aspect: "aspect-[16/9]",
+          description: "Multi-layered fractured glass distortion across character gaze with bold metallic title lockup."
+        },
+        {
+          type: "presentation",
+          title: "Trolling Noobs — High Energy Live Stream",
+          subtitle: "Reaction Framing & Chat Element (1920×1080)",
+          image: "/assets/youtube_thumbnail_grid_trolling_noobs.jpg",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-6",
+          aspect: "aspect-[16/9]",
+          description: "High-contrast speedlines, glowing cyan energy bursts, and in-game dialogue overlay for viewer curiosity."
+        },
+        {
+          type: "color-swatch",
+          title: "Electric Iris Cyber Glow",
+          subtitle: "Backlight Accent",
+          color: "#8052FF",
+          textColor: "#FFFFFF",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-3",
+          aspect: "aspect-[4/3]",
+          description: "Signature neon violet aura used to separate foreground characters from dark backgrounds."
+        },
+        {
+          type: "color-swatch",
+          title: "Velocity Cyan",
+          subtitle: "Speedline Bursts",
+          color: "#00E5FF",
+          textColor: "#000000",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-3",
+          aspect: "aspect-[4/3]",
+          description: "Electrifying blue glow providing chromatic contrast against warm character skin tones."
+        },
+        {
+          type: "type-specimen",
+          title: "High-Impact Streaming Display",
+          subtitle: "Condensed Italic Slabs & Heavy Sans",
+          colSpan: "col-span-12",
+          description: "Condensed, italicized, and dimensional display type with strokes and drop-shadows optimized for immediate mobile readability."
+        }
+      ]
+    },
+    assets: [
+      {
+        id: "asset-grid-1",
+        title: "GRID Fun Night — YouTube Thumbnail",
+        originalFileName: "youtube_thumbnail_grid_fun_night.jpg",
+        url: "/assets/youtube_thumbnail_grid_fun_night.jpg",
+        type: "Full HD Thumbnail",
+        aspectRatio: "16/9",
+        dimensions: "1920 × 1080 px",
+        caption: "High-energy YouTube thumbnail composition with character knife-throwing perspective and neon grid aesthetic."
+      },
+      {
+        id: "asset-grid-2",
+        title: "GRID Is Live — Cyberpunk Thumbnail",
+        originalFileName: "youtube_thumbnail_grid_is_live.jpg",
+        url: "/assets/youtube_thumbnail_grid_is_live.jpg",
+        type: "Full HD Thumbnail",
+        aspectRatio: "16/9",
+        dimensions: "1920 × 1080 px",
+        caption: "Cyberpunk broken glass effect thumbnail with dramatic violet backlighting and metallic title typography."
+      },
+      {
+        id: "asset-grid-3",
+        title: "Trolling Noobs — Live Stream Thumbnail",
+        originalFileName: "youtube_thumbnail_grid_trolling_noobs.jpg",
+        url: "/assets/youtube_thumbnail_grid_trolling_noobs.jpg",
+        type: "Full HD Thumbnail",
+        aspectRatio: "16/9",
+        dimensions: "1920 × 1080 px",
+        caption: "Expressive reaction live-stream thumbnail with speedlines, cyan radial burst, and integrated chat element."
+      }
+    ],
+    colors: [
+      { name: "Electric Cyber Iris", hex: "#8052FF", role: "Primary Backlight Glow & Atmosphere" },
+      { name: "Velocity Cyan", hex: "#00E5FF", role: "Energy Accents, Speedlines & Knife Glow" },
+      { name: "Signal Flame Red", hex: "#FF3B30", role: "Callout Badge Fills & Highlight Markers" },
+      { name: "Midnight Cyber Void", hex: "#080614", role: "Deep Background Canvas & Shadow Depths" }
+    ],
+    typography: [
+      {
+        role: "Primary Stream Headline",
+        family: "Heavy Angled Condensed Display",
+        sampleText: "GRID IS LIVE / TROLLING NOOBS",
+        notes: "Heavy italicized display lettering with thick outline strokes for maximum clarity at 300px thumbnail scale."
+      },
+      {
+        role: "Event Tag & Chat Overlay",
+        family: "Clean Geometric Grotesk",
+        sampleText: "FUN NIGHT / TODAY (ALL) Harry: Stop Trolling Bro",
+        notes: "Crisp rectangular tag with stark white-on-orange contrast."
+      }
+    ],
+    motifs: [
+      {
+        title: "Dramatic Foreshortened Perspective",
+        description: "Dynamic camera angle pushing hands, weapons, and characters directly toward the viewer to break 2D thumbnail flatness."
+      },
+      {
+        title: "Broken Glass & Texture Distortion",
+        description: "Realistic fracture overlays slicing across the composition to convey raw intensity and digital disruption."
+      },
+      {
+        title: "Radial Energy & Speedlines",
+        description: "High-contrast radial motion bursts radiating from the center to funnel eye focus immediately onto the focal subject."
+      }
+    ],
+    nextSlug: "cansa-square-independence",
+    prevSlug: "kalpavraksh"
+  },
+  {
+    id: "project-07",
+    slug: "cansa-square-independence",
+    title: "Cansa Square — Independence Day",
+    subtitle: "Community Invitation Poster & Cultural Print Creative",
+    category: "Festival Creative / Promotional Design",
+    categories: ["Festival Creative", "Promotional Design", "Print Communication"],
+    disciplines: ["Poster Design", "Print Communication", "Event Invitation", "Typographic Layout"],
+    summary: "An official Independence Day event invitation poster crafted for Cansa Square Residents, celebrating the national flag hoisting with vibrant tricolour ribbons, heritage monument silhouettes, and clear ceremonial hierarchy.",
+    coverImage: "/assets/cansa_square_independence_poster.jpg",
+    visualPersonality: "Patriotic, celebratory, welcoming, dignified, vibrant",
+    statement: "Created for the annual 15 August community flag-hoisting gathering. The design orchestrates the Indian tricolour through waving ribbons and rising banners, anchored by hands hoisting the national flag against the historic Red Fort silhouette with warm celebratory fireworks.",
+    moodBoard: {
+      heroQuote: "Uniting community celebration through tricolour harmony and architectural pride.",
+      tiles: [
+        {
+          type: "presentation",
+          title: "Full Commemorative Invitation Poster",
+          subtitle: "Master Print Layout (1414×2000)",
+          image: "/assets/cansa_square_independence_poster.jpg",
+          colSpan: "col-span-12 lg:col-span-8",
+          aspect: "aspect-[1414/2000] sm:aspect-[3/4]",
+          description: "Complete vertical composition showcasing festive fireworks, Red Fort heritage silhouette, and patriotic community hands."
+        },
+        {
+          type: "color-swatch",
+          title: "India Saffron",
+          subtitle: "Top Band & Celebration Badge",
+          color: "#FF9933",
+          textColor: "#000000",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
+          aspect: "aspect-square",
+          description: "Vibrant national saffron symbolizing strength, courage, and festive optimism."
+        },
+        {
+          type: "color-swatch",
+          title: "India Green",
+          subtitle: "Primary Headline Stroke",
+          color: "#138808",
+          textColor: "#FFFFFF",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
+          aspect: "aspect-square",
+          description: "Rich verdant green representing growth, prosperity, and auspicious festivity."
+        },
+        {
+          type: "color-swatch",
+          title: "Ashoka Navy",
+          subtitle: "Ceremonial Typography",
+          color: "#000080",
+          textColor: "#FFFFFF",
+          colSpan: "col-span-12 sm:col-span-6 lg:col-span-4",
+          aspect: "aspect-square",
+          description: "Stately navy blue carrying event details with authority and legal heritage."
+        },
+        {
+          type: "type-specimen",
+          title: "Ceremonial Serif & Clean Event Sans",
+          subtitle: "High-Contrast Commemorative Hierarchy",
+          colSpan: "col-span-12 lg:col-span-8",
+          description: "Stately bold serif for 'INDIA' commanding respect, paired with geometric sans-serif for program logistics."
+        }
+      ]
+    },
+    assets: [
+      {
+        id: "asset-cansa-1",
+        title: "Cansa Square Independence Day Invitation Poster",
+        originalFileName: "cansa_square_independence_poster.jpg",
+        url: "/assets/cansa_square_independence_poster.jpg",
+        type: "Print Poster Artwork",
+        aspectRatio: "1414/2000",
+        dimensions: "1414 × 2000 px",
+        caption: "Original uncropped event invitation poster designed for community notice boards and resident digital messaging."
+      }
+    ],
+    colors: [
+      { name: "National Saffron", hex: "#FF9933", role: "Date Badge, Ribbon Tops & Subtitle Accents" },
+      { name: "Verdant Green", hex: "#138808", role: "Primary 'INDIA' Headline & Ribbon Underside" },
+      { name: "Ashoka Navy", hex: "#000080", role: "Program Timings & Resident Information" },
+      { name: "Pure Ivory Cloud", hex: "#FFFFFF", role: "Central Canvas & Ribbon Center Band" }
+    ],
+    typography: [
+      {
+        role: "National Display Headline",
+        family: "Bold Stately Serif",
+        sampleText: "INDIA / INDEPENDENCE DAY",
+        notes: "Commanding classical serif celebrating the nation with monumental presence."
+      },
+      {
+        role: "Event Details & Logistics",
+        family: "Structured Bold Capital Sans",
+        sampleText: "CANSA SQUARE RESIDENTS / FLAG HOISTING AT TERRACE / 11AM / SWEETS DISTRIBUTION",
+        notes: "Wide-tracked legible uppercase lettering designed for effortless comprehension by all age groups."
+      }
+    ],
+    motifs: [
+      {
+        title: "Flowing Tricolour Ribbons",
+        description: "Dynamic tricolour bands curving gracefully across the header to frame the composition with festive rhythm."
+      },
+      {
+        title: "Red Fort Architectural Silhouette",
+        description: "Soft heritage monument outline grounding the event in authentic historic national legacy."
+      },
+      {
+        title: "Community Flag Hoisting Gesture",
+        description: "Diverse hands collectively holding the Tiranga towards the sky, celebrating togetherness and national pride."
+      }
+    ],
+    nextSlug: "logi-yatra",
+    prevSlug: "grid-gaming-thumbnails"
   }
 ];
