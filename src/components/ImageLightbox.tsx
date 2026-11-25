@@ -99,47 +99,47 @@ export default function ImageLightbox({
   return (
     <div className="fixed inset-0 z-[100] bg-void/98 backdrop-blur-md flex flex-col select-none animate-fadeIn">
       {/* Top Bar: Title, Metadata, Controls */}
-      <div className="h-16 px-6 flex items-center justify-between border-b border-[#181818] bg-void/80 z-10">
-        <div className="flex items-center gap-4">
-          <span className="text-[12px] uppercase tracking-[0.35px] font-semibold text-saffron-spark">
-            Original Asset Inspection
+      <div className="h-14 sm:h-16 px-3 sm:px-6 flex items-center justify-between border-b border-[#181818] bg-void/80 z-10 gap-2">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <span className="text-[11px] sm:text-[12px] uppercase tracking-[0.35px] font-semibold text-saffron-spark hidden sm:inline">
+            Original Asset
           </span>
-          <span className="text-[14px] text-bone-white font-normal truncate max-w-md">
+          <span className="text-[13px] sm:text-[14px] text-bone-white font-normal truncate max-w-[140px] xs:max-w-[200px] sm:max-w-md">
             {currentAsset.title}
           </span>
-          <span className="text-[12px] text-ash-gray font-mono hidden sm:inline">
+          <span className="text-[11px] sm:text-[12px] text-ash-gray font-mono hidden md:inline truncate">
             ({currentAsset.originalFileName} • {currentAsset.dimensions})
           </span>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Zoom controls */}
-          <div className="flex items-center bg-[#111111] rounded-full p-1 border border-[#222222] mr-2">
+          <div className="flex items-center bg-[#111111] rounded-full p-0.5 sm:p-1 border border-[#222222]">
             <button
               onClick={handleZoomOut}
-              className="p-1.5 text-ash-gray hover:text-bone-white rounded-full transition-colors"
+              className="p-1 sm:p-1.5 text-ash-gray hover:text-bone-white rounded-full transition-colors"
               title="Zoom Out (-)"
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
-            <span className="px-2 text-[12px] font-mono text-silver-mist">
+            <span className="px-1.5 sm:px-2 text-[11px] sm:text-[12px] font-mono text-silver-mist">
               {Math.round(zoomLevel * 100)}%
             </span>
             <button
               onClick={handleZoomIn}
-              className="p-1.5 text-ash-gray hover:text-bone-white rounded-full transition-colors"
+              className="p-1 sm:p-1.5 text-ash-gray hover:text-bone-white rounded-full transition-colors"
               title="Zoom In (+)"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             {zoomLevel !== 1 && (
               <button
                 onClick={handleResetZoom}
-                className="p-1.5 text-ash-gray hover:text-saffron-spark rounded-full transition-colors ml-1"
+                className="p-1 sm:p-1.5 text-ash-gray hover:text-saffron-spark rounded-full transition-colors ml-0.5"
                 title="Reset Zoom (0)"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             )}
           </div>
@@ -148,26 +148,26 @@ export default function ImageLightbox({
           <a
             href={currentAsset.url}
             download={currentAsset.originalFileName}
-            className="p-2 text-ash-gray hover:text-electric-iris rounded-full hover:bg-[#141414] transition-colors"
+            className="p-1.5 sm:p-2 text-ash-gray hover:text-electric-iris rounded-full hover:bg-[#141414] transition-colors"
             title="Download Original High-Res Asset"
           >
-            <Download className="w-5 h-5" />
+            <Download className="w-4 h-4 sm:w-5 sm:h-5" />
           </a>
 
           {/* Close Lightbox */}
           <button
             onClick={onClose}
-            className="p-2 text-ash-gray hover:text-bone-white rounded-full hover:bg-[#141414] transition-colors"
+            className="p-1.5 sm:p-2 text-ash-gray hover:text-bone-white rounded-full hover:bg-[#141414] transition-colors"
             title="Close Lightbox (ESC)"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
       </div>
 
       {/* Main Artwork Stage */}
       <div
-        className="flex-1 relative overflow-hidden flex items-center justify-center p-6 cursor-grab active:cursor-grabbing"
+        className="flex-1 relative overflow-hidden flex items-center justify-center p-3 sm:p-6 cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -177,10 +177,10 @@ export default function ImageLightbox({
         {assets.length > 1 && (
           <button
             onClick={handlePrev}
-            className="absolute left-6 z-20 p-3 rounded-full bg-[#111111]/80 border border-[#222222] text-bone-white hover:border-electric-iris hover:scale-105 transition-all"
+            className="absolute left-2 sm:left-6 z-20 p-2 sm:p-3 rounded-full bg-[#111111]/80 border border-[#222222] text-bone-white hover:border-electric-iris hover:scale-105 transition-all"
             aria-label="Previous Asset"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         )}
 
@@ -207,7 +207,7 @@ export default function ImageLightbox({
           <img
             src={currentAsset.url}
             alt={currentAsset.title}
-            className="max-h-[80vh] max-w-[85vw] object-contain rounded-lg shadow-2xl transition-all"
+            className="max-h-[75vh] sm:max-h-[80vh] max-w-[92vw] sm:max-w-[85vw] object-contain rounded-lg shadow-2xl transition-all"
             style={{
               imageRendering: "auto",
             }}
@@ -219,25 +219,25 @@ export default function ImageLightbox({
         {assets.length > 1 && (
           <button
             onClick={handleNext}
-            className="absolute right-6 z-20 p-3 rounded-full bg-[#111111]/80 border border-[#222222] text-bone-white hover:border-electric-iris hover:scale-105 transition-all"
+            className="absolute right-2 sm:right-6 z-20 p-2 sm:p-3 rounded-full bg-[#111111]/80 border border-[#222222] text-bone-white hover:border-electric-iris hover:scale-105 transition-all"
             aria-label="Next Asset"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         )}
       </div>
 
       {/* Bottom Info HUD */}
-      <div className="h-16 px-6 flex items-center justify-between border-t border-[#181818] bg-void/80 z-10 text-[13px]">
+      <div className="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between border-t border-[#181818] bg-void/80 z-10 text-[12px] sm:text-[13px] gap-2">
         <div className="text-silver-mist font-light max-w-2xl truncate">
           {currentAsset.caption || currentAsset.description}
         </div>
-        <div className="flex items-center gap-4 text-ash-gray font-mono text-[12px]">
+        <div className="flex items-center gap-2 sm:gap-4 text-ash-gray font-mono text-[11px] sm:text-[12px] shrink-0">
           <span>
             {currentIndex + 1} / {assets.length}
           </span>
           <span className="hidden sm:inline">•</span>
-          <span className="hidden sm:inline">Use mouse drag to pan when zoomed</span>
+          <span className="hidden md:inline">Use mouse drag to pan when zoomed</span>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default function Navbar({ onOpenPipeline }: NavbarProps) {
 
   return (
     <header className="w-full bg-void sticky top-0 z-50 border-b border-transparent transition-colors duration-200">
-      <div className="max-w-[1280px] mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
         {/* Brand Lockup: Stylized geometric mark + Graphic Designer Portfolio title */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="relative w-7 h-7 flex items-center justify-center">

@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowDown, ArrowUpRight, Sparkles, Mail } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import ConstellationCanvas from "@/components/ConstellationCanvas";
-import AmbientParticles from "@/components/AmbientParticles";
 import ProjectCard from "@/components/ProjectCard";
 import AssetAnalysisModal from "@/components/AssetAnalysisModal";
 import LineReveal from "@/components/LineReveal";
@@ -14,12 +12,6 @@ import { PROJECTS } from "@/data/projects";
 export default function HomePage() {
   const [selectedFilter, setSelectedFilter] = useState("All Work");
   const [isPipelineOpen, setIsPipelineOpen] = useState(false);
-
-  // Parallax container refs
-  const heroSectionRef = useRef<HTMLDivElement | null>(null);
-  const heroTextRef = useRef<HTMLDivElement | null>(null);
-  const approachSectionRef = useRef<HTMLDivElement | null>(null);
-  const worksSectionRef = useRef<HTMLDivElement | null>(null);
 
   const filterCategories = [
     "All Work",
@@ -37,7 +29,7 @@ export default function HomePage() {
       ? PROJECTS
       : PROJECTS.filter((p) => p.categories.includes(selectedFilter));
 
-  // Dynamic GSAP Layered Scroll Parallax (Client Only)
+  // GSAP Fade-In on Scroll Down (Lightweight, zero parallax scrub, runs once)
   useEffect(() => {
     let ctx: any = null;
     let isCancelled = false;
@@ -53,55 +45,19 @@ export default function HomePage() {
       gsap.registerPlugin(ScrollTrigger);
 
       ctx = gsap.context(() => {
-        // 1. Hero text parallax depth drift
-        if (heroTextRef.current && heroSectionRef.current) {
-          gsap.to(heroTextRef.current, {
-            yPercent: 22,
-            opacity: 0.25,
-            ease: "none",
-            scrollTrigger: {
-              trigger: heroSectionRef.current,
-              start: "top top",
-              end: "bottom top",
-              scrub: true,
-            },
-          });
-        }
-
-        // 2. Parallax floating effect on selected works section
-        const cards = document.querySelectorAll(".project-card-parallax");
-        cards.forEach((card, i) => {
-          const speed = i % 2 === 0 ? -28 : 28;
-          gsap.fromTo(
-            card,
-            { y: speed },
-            {
-              y: -speed,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          );
-        });
-
-        // 3. Staggered reveal for subheads and body
         const fadeElements = document.querySelectorAll(".gsap-fade-in");
         fadeElements.forEach((el) => {
           gsap.fromTo(
             el,
-            { opacity: 0, y: 35 },
+            { opacity: 0, y: 25 },
             {
               opacity: 1,
               y: 0,
-              duration: 1.1,
+              duration: 0.9,
               ease: "power3.out",
               scrollTrigger: {
                 trigger: el,
-                start: "top 85%",
+                start: "top 88%",
                 once: true,
               },
             }
@@ -118,80 +74,75 @@ export default function HomePage() {
 
   return (
     <main className="w-full bg-void min-h-screen relative overflow-hidden">
-      {/* Background ambient drifting particles */}
-      <AmbientParticles count={35} />
-
       {/* Top Navbar */}
       <Navbar onOpenPipeline={() => setIsPipelineOpen(true)} />
 
       {/* ========================================================= */}
       {/* HERO SECTION — Personal Graphic Design Portfolio          */}
+      {/* Single-Column Monolithic Typography (Pure Editorial Void) */}
       {/* ========================================================= */}
-      <section
-        ref={heroSectionRef}
-        className="relative min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-12 md:py-20 max-w-[1280px] mx-auto overflow-visible"
-      >
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center z-10">
-          {/* Left Column: Line Reveal Typography */}
-          <div
-            ref={heroTextRef}
-            className="lg:col-span-6 flex flex-col items-start gap-8 z-20"
-          >
-            {/* Saffron Spark Uppercase Label */}
-            <div className="gsap-fade-in flex items-center gap-2">
-              <span className="text-[13px] sm:text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
-                SELECTED GRAPHIC DESIGN WORKS • CREATIVE ARCHIVE
-              </span>
-            </div>
-
-            {/* Line Reveal Monolithic Headline (Weight 400, Tracking -0.04em) */}
-            <LineReveal
-              as="h1"
-              lines={["Designing", "ideas into", "visual experiences."]}
-              className="text-[58px] sm:text-[84px] lg:text-[98px] xl:text-[106px] font-normal leading-[0.95] tracking-[-3.12px] xl:tracking-[-4.52px] text-bone-white font-sans"
-              duration={1.3}
-              stagger={0.14}
-              triggerOnScroll={false}
-            />
-
-            {/* Ultra-Light (200) Body Copy */}
-            <div className="gsap-fade-in flex flex-col gap-3">
-              <p className="text-[18px] sm:text-[20px] font-body-ultralight text-silver-mist leading-[1.5] max-w-[500px]">
-                A collection of graphic design work exploring brand identities, visual communication, digital graphics and print design. Each project reflects a different idea, purpose and creative direction.
-              </p>
-            </div>
-
-            {/* Primary Action Button (Filled Violet Pill #8052ff) & Secondary CTA */}
-            <div className="gsap-fade-in flex flex-wrap items-center gap-6 pt-2">
-              <a href="#selected-works" className="btn-electric-pill">
-                <span>Explore Selected Work</span>
-                <ArrowDown className="w-4 h-4" />
-              </a>
-
-              <a
-                href="#contact"
-                className="btn-ghost-link group"
-              >
-                <span>Get in Touch</span>
-                <ArrowUpRight className="w-4 h-4 text-saffron-spark transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-            </div>
+      <section className="relative min-h-[calc(100vh-80px)] flex flex-col justify-center px-6 py-20 sm:py-28 lg:py-32 max-w-[1280px] mx-auto">
+        <div className="w-full flex flex-col items-start gap-8 sm:gap-10 z-10">
+          {/* Saffron Spark Uppercase Label */}
+          <div className="flex items-center gap-2">
+            <span className="text-[13px] sm:text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
+              SELECTED GRAPHIC DESIGN WORKS • CREATIVE ARCHIVE
+            </span>
           </div>
 
-          {/* Right Column: Signature 3D Creative Particle Constellation */}
-          <div className="lg:col-span-6 h-[480px] sm:h-[580px] lg:h-[720px] relative w-full flex items-center justify-center">
-            <div className="w-full h-full relative">
-              <ConstellationCanvas className="w-full h-full" interactive={true} />
+          {/* Line Reveal Monolithic Headline (Weight 400, Tracking -0.04em) */}
+          <LineReveal
+            as="h1"
+            lines={["Designing ideas into", "visual experiences."]}
+            className="text-[60px] sm:text-[88px] md:text-[104px] lg:text-[118px] font-normal leading-[0.93] tracking-[-3.2px] sm:tracking-[-4.6px] text-bone-white font-sans max-w-[1100px]"
+            duration={1.3}
+            stagger={0.14}
+            triggerOnScroll={false}
+          />
 
-              {/* Bottom Subtle Signature Tag */}
-              {/* <div className="absolute bottom-4 right-4 text-right pointer-events-none opacity-40">
-                <span className="text-[11px] font-mono text-ash-gray uppercase tracking-widest block">
-                  Constellation on Black Velvet
-                </span>
-                <span className="text-[10px] font-mono text-silver-mist">
-                  Creative Brainpower • Distributed Visual Ideas
-                </span>
-              </div> */}
+          {/* Ultra-Light (200) Body Copy */}
+          <div className="flex flex-col gap-4 max-w-[760px]">
+            <p className="text-[19px] sm:text-[22px] md:text-[23px] font-body-ultralight text-silver-mist leading-[1.6]">
+              A collection of graphic design work exploring brand identities, visual communication, digital graphics and print design. Each project reflects a different idea, purpose and creative direction.
+            </p>
+          </div>
+
+          {/* Primary Action Button (Filled Violet Pill #8052ff) & Secondary CTA */}
+          <div className="flex flex-wrap items-center gap-6 pt-3">
+            <a href="#selected-works" className="btn-electric-pill text-[15px] sm:text-[16px] px-8 py-3.5">
+              <span>Explore Selected Work</span>
+              <ArrowDown className="w-4 h-4" />
+            </a>
+
+            <a
+              href="#contact"
+              className="btn-ghost-link group text-[15px] sm:text-[16px]"
+            >
+              <span>Get in Touch</span>
+              <ArrowUpRight className="w-4 h-4 text-saffron-spark transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+
+          {/* Subtle Bottom Architectural Meta Strip */}
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-6 pt-14 sm:pt-20 border-t border-[#151515] mt-6">
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-mono uppercase text-ash-gray tracking-wider">Discipline</span>
+              <span className="text-[14px] text-bone-white font-medium">Brand & Visual Identity</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-mono uppercase text-ash-gray tracking-wider">Medium</span>
+              <span className="text-[14px] text-bone-white font-medium">Digital & Print Systems</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-mono uppercase text-ash-gray tracking-wider">Scope</span>
+              <span className="text-[14px] text-bone-white font-medium">Commercial & Cultural</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[11px] font-mono uppercase text-ash-gray tracking-wider">Status</span>
+              <span className="text-[14px] text-saffron-spark font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-saffron-spark animate-pulse" />
+                Available for Projects
+              </span>
             </div>
           </div>
         </div>
@@ -200,10 +151,7 @@ export default function HomePage() {
       {/* ========================================================= */}
       {/* 2ND SECTION: VISUAL APPROACH & INTENTION                  */}
       {/* ========================================================= */}
-      <section
-        ref={approachSectionRef}
-        className="max-w-[1280px] mx-auto px-6 py-24 sm:py-32 border-t border-[#121212] relative z-10"
-      >
+      <section className="max-w-[1280px] mx-auto px-6 py-24 sm:py-32 border-t border-[#121212]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 flex flex-col gap-6">
             <span className="text-[14px] uppercase tracking-[0.35px] font-semibold text-saffron-spark font-mono">
@@ -231,11 +179,10 @@ export default function HomePage() {
 
       {/* ========================================================= */}
       {/* SELECTED WORKS SECTION                                    */}
-      {/* Filterable categories + Asymmetric Layered Parallax Grid  */}
+      {/* Clean Grid (Zero lag, zero parallax scrub)                */}
       {/* ========================================================= */}
       <section
         id="selected-works"
-        ref={worksSectionRef}
         className="max-w-[1280px] mx-auto px-6 py-16 scroll-mt-24"
       >
         {/* Section Header with Category Filter Bar */}
@@ -280,10 +227,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Floating Project Grid with Layered Parallax Depth */}
+        {/* Clean Project Grid (Zero lag, smooth natural flow) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
           {filteredProjects.map((project, idx) => (
-            <div key={project.id} className="project-card-parallax">
+            <div key={project.id} className="gsap-fade-in">
               <ProjectCard project={project} index={idx} />
             </div>
           ))}
@@ -342,8 +289,6 @@ export default function HomePage() {
       {/* ========================================================= */}
       <section id="contact" className="max-w-[1280px] mx-auto px-6 py-28 border-t border-[#121212] scroll-mt-24">
         <div className="w-full bg-[#080808] border border-[#181818] rounded-3xl p-8 sm:p-14 relative overflow-hidden flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-electric-iris/10 rounded-full blur-3xl pointer-events-none" />
-
           <div className="flex-1 flex flex-col gap-4 z-10 max-w-2xl">
             <span className="text-[13px] font-mono text-saffron-spark uppercase tracking-wider font-semibold">
               Get in Touch
