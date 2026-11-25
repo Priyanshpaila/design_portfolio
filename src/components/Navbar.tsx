@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sparkles, Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 
 interface NavbarProps {
   onOpenPipeline?: () => void;
@@ -16,7 +16,6 @@ export default function Navbar({ onOpenPipeline }: NavbarProps) {
   const navLinks = [
     { label: "Selected Works", href: "/#selected-works" },
     { label: "About", href: "/#about" },
-    { label: "Pipeline", href: "/#asset-pipeline", action: onOpenPipeline },
     { label: "Contact", href: "/#contact" },
   ];
 
@@ -66,18 +65,6 @@ export default function Navbar({ onOpenPipeline }: NavbarProps) {
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
-            if (link.action) {
-              return (
-                <button
-                  key={link.label}
-                  onClick={link.action}
-                  className="text-[14px] uppercase tracking-[0.35px] font-semibold text-ash-gray hover:text-bone-white transition-colors flex items-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-saffron-spark" />
-                  {link.label}
-                </button>
-              );
-            }
             return (
               <Link
                 key={link.label}
@@ -104,16 +91,7 @@ export default function Navbar({ onOpenPipeline }: NavbarProps) {
         </div>
 
         {/* Mobile Hamburger */}
-        <div className="md:hidden flex items-center gap-3">
-          {onOpenPipeline && (
-            <button
-              onClick={onOpenPipeline}
-              className="p-2 text-saffron-spark"
-              aria-label="Inspect pipeline"
-            >
-              <Sparkles className="w-5 h-5" />
-            </button>
-          )}
+        <div className="md:hidden flex items-center">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 text-bone-white"
@@ -127,33 +105,16 @@ export default function Navbar({ onOpenPipeline }: NavbarProps) {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-void px-6 py-6 border-b border-[#1f1f1f] flex flex-col gap-5">
-          {navLinks.map((link) => {
-            if (link.action) {
-              return (
-                <button
-                  key={link.label}
-                  onClick={() => {
-                    link.action?.();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-left text-[14px] uppercase tracking-[0.35px] font-semibold text-ash-gray hover:text-bone-white py-2 flex items-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4 text-saffron-spark" />
-                  {link.label}
-                </button>
-              );
-            }
-            return (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[14px] uppercase tracking-[0.35px] font-semibold text-ash-gray hover:text-bone-white py-2"
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] uppercase tracking-[0.35px] font-semibold text-ash-gray hover:text-bone-white py-2"
+            >
+              {link.label}
+            </Link>
+          ))}
           <div className="pt-2">
             <a
               href="/#contact"
